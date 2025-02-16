@@ -17,7 +17,7 @@ sys.path.append(os.path.join(script_location, "../nxai-utilities/python-utilitie
 import communication_utils
 
 
-CONFIG_FILE = os.path.join(script_location, "..", "etc", "plugin.settings.ini")
+CONFIG_FILE = os.path.join(script_location, "..", "etc", "plugin.geoposition.ini")
 
 # Set up logging
 LOG_FILE = os.path.join(script_location, "..", "etc", "plugin.geoposition.log")
@@ -199,7 +199,7 @@ if __name__ == "__main__":
     ## read configuration file if it's available
     config()
 
-    logger.info("Initializing example plugin")
+    logger.info("Initializing geoposition plugin")
     logger.debug("Input parameters: " + str(sys.argv))
 
     # Parse input arguments
