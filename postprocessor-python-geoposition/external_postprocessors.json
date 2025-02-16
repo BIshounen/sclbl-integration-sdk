@@ -1,7 +1,7 @@
 {
   "externalPostprocessors": [
     {
-      "Name": "Example-Postprocessor-Setting",
+      "Name": "Geoposition-Postprocessor-Setting",
       "Command": "/opt/networkoptix-metavms/mediaserver/bin/plugins/nxai_plugin/nxai_manager/postprocessors/postprocessor-python-geoposition",
       "SocketPath": "/tmp/python-geoposition-postprocessor.sock",
       "ReceiveInputTensor": false,
@@ -64,7 +64,7 @@
             },
             {
               "type": "DoubleSpinBox",
-              "name": "point1Longitude",
+              "name": "point2Longitude",
               "caption": "Longitude",
               "description": "Longitude of point 2",
               "defaultValue": -84450.848,
@@ -88,7 +88,7 @@
             },
             {
               "type": "DoubleSpinBox",
-              "name": "point2Latitude",
+              "name": "point3Latitude",
               "caption": "Latitude",
               "description": "Latitude of point 3",
               "defaultValue": 33880.493,
@@ -97,7 +97,7 @@
             },
             {
               "type": "DoubleSpinBox",
-              "name": "point1Longitude",
+              "name": "point3Longitude",
               "caption": "Longitude",
               "description": "Longitude of point 3",
               "defaultValue": -84452.158,
