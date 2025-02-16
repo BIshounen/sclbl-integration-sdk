@@ -182,10 +182,10 @@ def main():
 
                 logger.info(f"Transformed pixel to geo:\n {(lat, lon)}")
 
-                input_object['ObjectsMetaData'][class_name]["AttributeKeys"][object_index].append("Latitude")
-                input_object['ObjectsMetaData'][class_name]["AttributeKeys"][object_index].append(lat)
-                input_object['ObjectsMetaData'][class_name]["AttributeKeys"][object_index].append("Longitude")
-                input_object['ObjectsMetaData'][class_name]["AttributeKeys"][object_index].append(lon)
+                # input_object['ObjectsMetaData'][class_name]["AttributeKeys"][object_index].append("Latitude")
+                # input_object['ObjectsMetaData'][class_name]["AttributeKeys"][object_index].append(lat)
+                # input_object['ObjectsMetaData'][class_name]["AttributeKeys"][object_index].append("Longitude")
+                # input_object['ObjectsMetaData'][class_name]["AttributeKeys"][object_index].append(lon)
 
         formatted_unpacked_object = pformat(input_object)
         logging.info(f"Packing:\n\n{formatted_unpacked_object}\n\n")
