@@ -43,12 +43,12 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/postprocessor-python-geoposition)
 # add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/preprocessor-python-example)
 
 # # Add installation option
-install(TARGETS
-    postprocessor-c-example
-    postprocessor-c-image-example
-    postprocessor-c-raw-example
-    DESTINATION /opt/networkoptix-metavms/mediaserver/bin/plugins/nxai_plugin/nxai_manager/postprocessors/
-)
+# install(TARGETS
+#     postprocessor-c-example
+#     postprocessor-c-image-example
+#     postprocessor-c-raw-example
+#     DESTINATION /opt/networkoptix-metavms/mediaserver/bin/plugins/nxai_plugin/nxai_manager/postprocessors/
+# )
 
 # Install postprocessors
 install(PROGRAMS
