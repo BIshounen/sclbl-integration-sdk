@@ -20,7 +20,7 @@ import communication_utils
 CONFIG_FILE = os.path.join(script_location, "..", "etc", "plugin.settings.ini")
 
 # Set up logging
-LOG_FILE = os.path.join(script_location, "..", "etc", "plugin.settings.log")
+LOG_FILE = os.path.join(script_location, "..", "etc", "plugin.geoposition.log")
 
 # Initialize plugin and logging, script makes use of INFO and DEBUG levels
 logging.basicConfig(
