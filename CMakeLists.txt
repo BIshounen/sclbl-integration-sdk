@@ -7,40 +7,40 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/nxai-utilities)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/nxai-utilities/include)
 
 # Add C Postprocessor project
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/postprocessor-c-example)
+# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/postprocessor-c-example)
 
 # Add C Image Postprocessor project
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/postprocessor-c-image-example)
+# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/postprocessor-c-image-example)
 
 # Add C Raw Postprocessor project
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/postprocessor-c-raw-example)
+# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/postprocessor-c-raw-example)
 
 # Add Postprocessor Python project
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/postprocessor-python-example)
+# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/postprocessor-python-example)
 
 # Add Image Postprocessor Python project
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/postprocessor-python-image-example)
+# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/postprocessor-python-image-example)
 
 # Add Confidence Postprocessor Python project
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/postprocessor-python-confidences-example)
+# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/postprocessor-python-confidences-example)
 
 # Add Settings Postprocessor Python project
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/postprocessor-python-settings-example)
+# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/postprocessor-python-settings-example)
 
 # Add Postprocessor Python Events project
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/postprocessor-python-events-example)
+# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/postprocessor-python-events-example)
 
 # Add Postprocessor Python NoResponse project
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/postprocessor-python-noresponse-example)
+# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/postprocessor-python-noresponse-example)
 
 # Add Cloud Inference Postprocessor Python project
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/postprocessor-cloud-inference-example)
+# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/postprocessor-cloud-inference-example)
 
 # Add Geoposition Postprocessor Python project
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/postprocessor-python-geoposition)
 
 # Add Preprocessor Python project
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/preprocessor-python-example)
+# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/preprocessor-python-example)
 
 # # Add installation option
 install(TARGETS
@@ -52,20 +52,20 @@ install(TARGETS
 
 # Install postprocessors
 install(PROGRAMS
-    ${CMAKE_CURRENT_BINARY_DIR}/postprocessor-python-example/postprocessor-python-example
-    ${CMAKE_CURRENT_BINARY_DIR}/postprocessor-python-image-example/postprocessor-python-image-example
-    ${CMAKE_CURRENT_BINARY_DIR}/postprocessor-python-confidences-example/postprocessor-python-confidences-example
-    ${CMAKE_CURRENT_BINARY_DIR}/postprocessor-python-settings-example/postprocessor-python-settings-example
-    ${CMAKE_CURRENT_BINARY_DIR}/preprocessor-python-example/preprocessor-python-example
-    ${CMAKE_CURRENT_BINARY_DIR}/postprocessor-python-noresponse-example/postprocessor-python-noresponse-example
-    ${CMAKE_CURRENT_BINARY_DIR}/postprocessor-python-noresponse-example/postprocessor-python-geoposition
-    ${CMAKE_CURRENT_BINARY_DIR}/postprocessor-python-events-example/postprocessor-python-events-example
-    ${CMAKE_CURRENT_BINARY_DIR}/postprocessor-cloud-inference-example/postprocessor-cloud-inference-example
+    # ${CMAKE_CURRENT_BINARY_DIR}/postprocessor-python-example/postprocessor-python-example
+    # ${CMAKE_CURRENT_BINARY_DIR}/postprocessor-python-image-example/postprocessor-python-image-example
+    # ${CMAKE_CURRENT_BINARY_DIR}/postprocessor-python-confidences-example/postprocessor-python-confidences-example
+    # ${CMAKE_CURRENT_BINARY_DIR}/postprocessor-python-settings-example/postprocessor-python-settings-example
+    # ${CMAKE_CURRENT_BINARY_DIR}/preprocessor-python-example/preprocessor-python-example
+    # ${CMAKE_CURRENT_BINARY_DIR}/postprocessor-python-noresponse-example/postprocessor-python-noresponse-example
+    # ${CMAKE_CURRENT_BINARY_DIR}/postprocessor-python-noresponse-example/postprocessor-python-geoposition
+    # ${CMAKE_CURRENT_BINARY_DIR}/postprocessor-python-events-example/postprocessor-python-events-example
+    # ${CMAKE_CURRENT_BINARY_DIR}/postprocessor-cloud-inference-example/postprocessor-cloud-inference-example
     DESTINATION /opt/networkoptix-metavms/mediaserver/bin/plugins/nxai_plugin/nxai_manager/postprocessors/
 )
 
 # Install preprocessors
-install(PROGRAMS
-    ${CMAKE_CURRENT_BINARY_DIR}/preprocessor-python-example/preprocessor-python-example
-    DESTINATION /opt/networkoptix-metavms/mediaserver/bin/plugins/nxai_plugin/nxai_manager/preprocessors/
-)
+# install(PROGRAMS
+#     ${CMAKE_CURRENT_BINARY_DIR}/preprocessor-python-example/preprocessor-python-example
+#     DESTINATION /opt/networkoptix-metavms/mediaserver/bin/plugins/nxai_plugin/nxai_manager/preprocessors/
+# )
