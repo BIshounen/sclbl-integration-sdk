@@ -129,36 +129,45 @@ def main():
             lon2 = None
             lat3 = None
             lon3 = None
+
             if setting_name == "externalprocessor.point1":
-                known_points[0]["pixel"] = (setting_value["figure"]["points"][0][0],
-                                            setting_value["figure"]["points"][0][1])
+                logger.info(f"point1: {setting_value}")
+            #     known_points[0]["pixel"] = (setting_value["figure"]["points"][0][0],
+            #                                 setting_value["figure"]["points"][0][1])
 
-            if setting_name == "externalprocessor.point2":
-                known_points[1]["pixel"] = (setting_value["figure"]["points"][0][0],
-                                            setting_value["figure"]["points"][0][1])
+            # if setting_name == "externalprocessor.point2":
+            #     known_points[1]["pixel"] = (setting_value["figure"]["points"][0][0],
+            #                                 setting_value["figure"]["points"][0][1])
 
-            if setting_name == "externalprocessor.point3":
-                known_points[2]["pixel"] = (setting_value["figure"]["points"][0][0],
-                                            setting_value["figure"]["points"][0][1])
+            # if setting_name == "externalprocessor.point3":
+            #     known_points[2]["pixel"] = (setting_value["figure"]["points"][0][0],
+            #                                 setting_value["figure"]["points"][0][1])
 
             if setting_name == "externalprocessor.point1Latitude":
-                lat1 = setting_value
-            if setting_name == "externalprocessor.point1Longitude":
-                lon1 = setting_value
+                logger.info(f"lat1: {setting_value}")
+            #     lat1 = setting_value
+            # if setting_name == "externalprocessor.point1Longitude":
+            #     lon1 = setting_value
 
-            if setting_name == "externalprocessor.point2Latitude":
-                lat2 = setting_value
-            if setting_name == "externalprocessor.point2Longitude":
-                lon2 = setting_value
+            # if setting_name == "externalprocessor.point2Latitude":
+            #     lat2 = setting_value
+            # if setting_name == "externalprocessor.point2Longitude":
+            #     lon2 = setting_value
 
-            if setting_name == "externalprocessor.point3Latitude":
-                lat3 = setting_value
-            if setting_name == "externalprocessor.point3Longitude":
-                lon3 = setting_value
+            # if setting_name == "externalprocessor.point3Latitude":
+            #     lat3 = setting_value
+            # if setting_name == "externalprocessor.point3Longitude":
+            #     lon3 = setting_value
 
-            known_points[0]['lat_lon'] = (lat1, lon1)
-            known_points[1]['lat_lon'] = (lat2, lon2)
-            known_points[2]['lat_lon'] = (lat3, lon3)
+            # known_points[0]['lat_lon'] = (lat1, lon1)
+            # known_points[1]['lat_lon'] = (lat2, lon2)
+            # known_points[2]['lat_lon'] = (lat3, lon3)
+
+            known_points = [
+                {"pixel": (0.2, 0.3), "lat_lon": (33878.754, -84450.569)},
+                {"pixel": (0.3, 0.4), "lat_lon": (33878.583, -84450.848)},
+                {"pixel": (0.5, 0.6), "lat_lon": (33880.493, -84452.158)}
+            ]
 
             logger.info(f"Got points from settings:\n {known_points}")
 
