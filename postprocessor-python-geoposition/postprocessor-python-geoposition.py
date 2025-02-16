@@ -6,6 +6,7 @@ import logging
 import logging.handlers
 import configparser
 from pprint import pformat
+from affine_transform import get_pixel_to_coordinates
 
 # Add the nxai-utilities python utilities
 if getattr(sys, "frozen", False):
@@ -112,18 +113,66 @@ def main():
         formatted_unpacked_object = pformat(input_object)
         logging.info(f"Unpacked:\n\n{formatted_unpacked_object}\n\n")
 
-        # Read the settings passed through from the AI Manager and add them as attributes
-        for _, class_data in input_object["ObjectsMetaData"].items():
-            for object_index in range(len(class_data["AttributeKeys"])):
-                for setting_name, setting_value in input_object[
-                    "ExternalProcessorSettings"
-                ].items():
-                    if setting_name == "externalprocessor.attributeName":
-                        class_data["AttributeKeys"][object_index].append(setting_value)
-                    if setting_name == "externalprocessor.attributeValue":
-                        class_data["AttributeValues"][object_index].append(
-                            setting_value
-                        )
+        # Read settings to get known points for affine transformation
+        known_points = [
+            {"pixel": (None, None), "lat_lon": (None, None)},
+            {"pixel": (None, None), "lat_lon": (None, None)},
+            {"pixel": (None, None), "lat_lon": (None, None)}
+        ]
+
+        for setting_name, setting_value in input_object[
+            "ExternalProcessorSettings"
+        ].items():
+            lat1 = None
+            lon1 = None
+            lat2 = None
+            lon2 = None
+            lat3 = None
+            lon3 = None
+            if setting_name == "externalprocessor.point1":
+                known_points[0]["pixel"] = (setting_value["figure"]["points"][0][0],
+                                            setting_value["figure"]["points"][0][1])
+
+            if setting_name == "externalprocessor.point2":
+                known_points[1]["pixel"] = (setting_value["figure"]["points"][0][0],
+                                            setting_value["figure"]["points"][0][1])
+
+            if setting_name == "externalprocessor.point3":
+                known_points[2]["pixel"] = (setting_value["figure"]["points"][0][0],
+                                            setting_value["figure"]["points"][0][1])
+
+            if setting_name == "externalprocessor.point1Latitude":
+                lat1 = setting_value
+            if setting_name == "externalprocessor.point1Longitude":
+                lon1 = setting_value
+
+            if setting_name == "externalprocessor.point2Latitude":
+                lat2 = setting_value
+            if setting_name == "externalprocessor.point2Longitude":
+                lon2 = setting_value
+
+            if setting_name == "externalprocessor.point3Latitude":
+                lat3 = setting_value
+            if setting_name == "externalprocessor.point3Longitude":
+                lon3 = setting_value
+
+            known_points[0]['lat_lon'] = (lat1, lon1)
+            known_points[1]['lat_lon'] = (lat2, lon2)
+            known_points[2]['lat_lon'] = (lat3, lon3)
+
+        # Add lat and long to attributes
+        for class_name, bboxes in input_object['BBoxes_xyxy'].items():
+            for object_index in range(len(bboxes)):
+                bbox = bboxes[object_index]
+                central_pixel = (bbox[0] - bbox[2], bbox[1] - bbox[3])
+                lat, lon = get_pixel_to_coordinates(known_points=known_points, pixel=central_pixel)
+                lat = round(float(lat), 3)
+                lon = round(float(lon), 3)
+
+                input_object['ObjectsMetaData'][class_name]["AttributeKeys"][object_index].append("Latitude")
+                input_object['ObjectsMetaData'][class_name]["AttributeKeys"][object_index].append(lat)
+                input_object['ObjectsMetaData'][class_name]["AttributeKeys"][object_index].append("Longitude")
+                input_object['ObjectsMetaData'][class_name]["AttributeKeys"][object_index].append(lon)
 
         formatted_unpacked_object = pformat(input_object)
         logging.info(f"Packing:\n\n{formatted_unpacked_object}\n\n")
