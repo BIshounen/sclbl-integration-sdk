@@ -160,6 +160,8 @@ def main():
             known_points[1]['lat_lon'] = (lat2, lon2)
             known_points[2]['lat_lon'] = (lat3, lon3)
 
+            logger.info(f"Got points from settings:\n {known_points}")
+
         # Add lat and long to attributes
         for class_name, bboxes in input_object['BBoxes_xyxy'].items():
             for object_index in range(len(bboxes)):
@@ -168,6 +170,8 @@ def main():
                 lat, lon = get_pixel_to_coordinates(known_points=known_points, pixel=central_pixel)
                 lat = round(float(lat), 3)
                 lon = round(float(lon), 3)
+
+                logger.info(f"Transformed pixel to geo:\n {(lat, lon)}")
 
                 input_object['ObjectsMetaData'][class_name]["AttributeKeys"][object_index].append("Latitude")
                 input_object['ObjectsMetaData'][class_name]["AttributeKeys"][object_index].append(lat)
