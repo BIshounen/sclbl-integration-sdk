@@ -1,0 +1,112 @@
+{
+  "externalPostprocessors": [
+    {
+      "Name": "Example-Postprocessor-Setting",
+      "Command": "/opt/networkoptix-metavms/mediaserver/bin/plugins/nxai_plugin/nxai_manager/postprocessors/postprocessor-python-geoposition",
+      "SocketPath": "/tmp/python-geoposition-postprocessor.sock",
+      "ReceiveInputTensor": false,
+      "ReceiveConfidenceData": false,
+      "Settings": [
+        {
+          "type": "GroupBox",
+          "caption": "Point 1",
+          "items": [
+            {
+              "type": "PolygonFigure",
+              "name": "point1",
+              "caption": "Point 1",
+              "description": "Point 1 on the camera",
+              "useLabelField": false,
+              "minPoints": 1,
+              "maxPoints": 1
+            },
+            {
+              "type": "DoubleSpinBox",
+              "name": "point1Latitude",
+              "caption": "Latitude",
+              "description": "Latitude of point 1",
+              "defaultValue": 33878.754,
+              "minValue": -90000.000,
+              "maxValue": 90000.000
+            },
+            {
+              "type": "DoubleSpinBox",
+              "name": "point1Longitude",
+              "caption": "Longitude",
+              "description": "Longitude of point 1",
+              "defaultValue": -84450.569,
+              "minValue": -180000.000,
+              "maxValue": 180000.000
+            }
+          ]
+        },
+        {
+          "type": "GroupBox",
+          "caption": "Point 2",
+          "items": [
+            {
+              "type": "PolygonFigure",
+              "name": "point2",
+              "caption": "Point 2",
+              "description": "Point 2 on the camera",
+              "useLabelField": false,
+              "minPoints": 1,
+              "maxPoints": 1
+            },
+            {
+              "type": "DoubleSpinBox",
+              "name": "point2Latitude",
+              "caption": "Latitude",
+              "description": "Latitude of point 2",
+              "defaultValue": 33878.583,
+              "minValue": -90000.000,
+              "maxValue": 90000.000
+            },
+            {
+              "type": "DoubleSpinBox",
+              "name": "point1Longitude",
+              "caption": "Longitude",
+              "description": "Longitude of point 2",
+              "defaultValue": -84450.848,
+              "minValue": -180000.000,
+              "maxValue": 180000.000
+            }
+          ]
+        },
+        {
+          "type": "GroupBox",
+          "caption": "Point 3",
+          "items": [
+            {
+              "type": "PolygonFigure",
+              "name": "point3",
+              "caption": "Point 3",
+              "description": "Point 3 on the camera",
+              "useLabelField": false,
+              "minPoints": 1,
+              "maxPoints": 1
+            },
+            {
+              "type": "DoubleSpinBox",
+              "name": "point2Latitude",
+              "caption": "Latitude",
+              "description": "Latitude of point 3",
+              "defaultValue": 33880.493,
+              "minValue": -90000.000,
+              "maxValue": 90000.000
+            },
+            {
+              "type": "DoubleSpinBox",
+              "name": "point1Longitude",
+              "caption": "Longitude",
+              "description": "Longitude of point 3",
+              "defaultValue": -84452.158,
+              "minValue": -180000.000,
+              "maxValue": 180000.000
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
