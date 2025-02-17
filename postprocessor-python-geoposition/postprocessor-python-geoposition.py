@@ -6,7 +6,6 @@ import logging
 import logging.handlers
 import configparser
 from pprint import pformat
-# from affine_transform import get_pixel_to_coordinates
 
 # Add the nxai-utilities python utilities
 if getattr(sys, "frozen", False):
@@ -17,10 +16,10 @@ sys.path.append(os.path.join(script_location, "../nxai-utilities/python-utilitie
 import communication_utils
 
 
-CONFIG_FILE = os.path.join(script_location, "..", "etc", "plugin.geoposition.ini")
+CONFIG_FILE = os.path.join(script_location, "..", "etc", "plugin.settings.ini")
 
 # Set up logging
-LOG_FILE = os.path.join(script_location, "..", "etc", "plugin.geoposition.log")
+LOG_FILE = os.path.join(script_location, "..", "etc", "plugin.settings.log")
 
 # Initialize plugin and logging, script makes use of INFO and DEBUG levels
 logging.basicConfig(
@@ -32,12 +31,12 @@ logging.basicConfig(
 
 # The name of the postprocessor.
 # This is used to match the definition of the postprocessor with routing.
-Postprocessor_Name = "Geoposition-Postprocessor"
+Postprocessor_Name = "Python-Geoposition-Postprocessor"
 
 # The socket this postprocessor will listen on.
 # This is always given as the first argument when the process is started
 # But it can be manually defined as well, as long as it is the same as the socket path in the runtime settings
-Postprocessor_Socket_Path = "/tmp/postprocessor-python-geoposition.sock"
+Postprocessor_Socket_Path = "/tmp/python-geoposition-postprocessor.sock"
 
 # Data Types
 # 1:  //FLOAT
@@ -113,79 +112,18 @@ def main():
         formatted_unpacked_object = pformat(input_object)
         logging.info(f"Unpacked:\n\n{formatted_unpacked_object}\n\n")
 
-        # Read settings to get known points for affine transformation
-        # known_points = [
-        #     {"pixel": (None, None), "lat_lon": (None, None)},
-        #     {"pixel": (None, None), "lat_lon": (None, None)},
-        #     {"pixel": (None, None), "lat_lon": (None, None)}
-        # ]
-
-        # for setting_name, setting_value in input_object[
-        #     "ExternalProcessorSettings"
-        # ].items():
-        #     lat1 = None
-        #     lon1 = None
-        #     lat2 = None
-        #     lon2 = None
-        #     lat3 = None
-        #     lon3 = None
-        #
-        #     if setting_name == "externalprocessor.point1":
-        #         logger.info(f"point1: {setting_value}")
-        #     #     known_points[0]["pixel"] = (setting_value["figure"]["points"][0][0],
-        #     #                                 setting_value["figure"]["points"][0][1])
-        #
-        #     # if setting_name == "externalprocessor.point2":
-        #     #     known_points[1]["pixel"] = (setting_value["figure"]["points"][0][0],
-        #     #                                 setting_value["figure"]["points"][0][1])
-        #
-        #     # if setting_name == "externalprocessor.point3":
-        #     #     known_points[2]["pixel"] = (setting_value["figure"]["points"][0][0],
-        #     #                                 setting_value["figure"]["points"][0][1])
-        #
-        #     if setting_name == "externalprocessor.point1Latitude":
-        #         logger.info(f"lat1: {setting_value}")
-        #     #     lat1 = setting_value
-        #     # if setting_name == "externalprocessor.point1Longitude":
-        #     #     lon1 = setting_value
-        #
-        #     # if setting_name == "externalprocessor.point2Latitude":
-        #     #     lat2 = setting_value
-        #     # if setting_name == "externalprocessor.point2Longitude":
-        #     #     lon2 = setting_value
-        #
-        #     # if setting_name == "externalprocessor.point3Latitude":
-        #     #     lat3 = setting_value
-        #     # if setting_name == "externalprocessor.point3Longitude":
-        #     #     lon3 = setting_value
-        #
-        #     # known_points[0]['lat_lon'] = (lat1, lon1)
-        #     # known_points[1]['lat_lon'] = (lat2, lon2)
-        #     # known_points[2]['lat_lon'] = (lat3, lon3)
-        #
-        #     known_points = [
-        #         {"pixel": (0.2, 0.3), "lat_lon": (33878.754, -84450.569)},
-        #         {"pixel": (0.3, 0.4), "lat_lon": (33878.583, -84450.848)},
-        #         {"pixel": (0.5, 0.6), "lat_lon": (33880.493, -84452.158)}
-        #     ]
-        #
-        #     logger.info(f"Got points from settings:\n {known_points}")
-
-        # Add lat and long to attributes
-        # for class_name, bboxes in input_object['BBoxes_xyxy'].items():
-        #     for object_index in range(len(bboxes)):
-        #         bbox = bboxes[object_index]
-        #         central_pixel = (bbox[0] - bbox[2], bbox[1] - bbox[3])
-        #         lat, lon = get_pixel_to_coordinates(known_points=known_points, pixel=central_pixel)
-        #         lat = round(float(lat), 3)
-        #         lon = round(float(lon), 3)
-        #
-        #         logger.info(f"Transformed pixel to geo:\n {(lat, lon)}")
-
-                # input_object['ObjectsMetaData'][class_name]["AttributeKeys"][object_index].append("Latitude")
-                # input_object['ObjectsMetaData'][class_name]["AttributeKeys"][object_index].append(lat)
-                # input_object['ObjectsMetaData'][class_name]["AttributeKeys"][object_index].append("Longitude")
-                # input_object['ObjectsMetaData'][class_name]["AttributeKeys"][object_index].append(lon)
+        # Read the settings passed through from the AI Manager and add them as attributes
+        for _, class_data in input_object["ObjectsMetaData"].items():
+            for object_index in range(len(class_data["AttributeKeys"])):
+                for setting_name, setting_value in input_object[
+                    "ExternalProcessorSettings"
+                ].items():
+                    if setting_name == "externalprocessor.attributeName":
+                        class_data["AttributeKeys"][object_index].append(setting_value)
+                    if setting_name == "externalprocessor.attributeValue":
+                        class_data["AttributeValues"][object_index].append(
+                            setting_value
+                        )
 
         formatted_unpacked_object = pformat(input_object)
         logging.info(f"Packing:\n\n{formatted_unpacked_object}\n\n")
@@ -208,7 +146,7 @@ if __name__ == "__main__":
     ## read configuration file if it's available
     config()
 
-    logger.info("Initializing geoposition plugin")
+    logger.info("Initializing example plugin")
     logger.debug("Input parameters: " + str(sys.argv))
 
     # Parse input arguments
