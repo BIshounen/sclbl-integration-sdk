@@ -23,3 +23,9 @@ cmake --build .
 ```shell
 mv /postprocessor-python-geoposition/postprocessor-python-geoposition /opt/networkoptix-metavms/mediaserver/bin/plugins/nxai_plugin/nxai_manager/postprocessors/
 ```
+
+## Restart
+
+```shell
+service networkoptix-metavms-mediaserver restart
+```
