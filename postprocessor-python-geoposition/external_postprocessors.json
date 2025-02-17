@@ -12,13 +12,10 @@
           "caption": "Point 1",
           "items": [
             {
-              "type": "PolygonFigure",
+              "type": "BoxFigure",
               "name": "point1",
               "caption": "Point 1",
-              "description": "Point 1 on the camera",
-              "useLabelField": false,
-              "minPoints": 1,
-              "maxPoints": 1
+              "description": "Point 1 on the camera"
             },
             {
               "type": "DoubleSpinBox",
@@ -45,13 +42,10 @@
           "caption": "Point 2",
           "items": [
             {
-              "type": "PolygonFigure",
+              "type": "BoxFigure",
               "name": "point2",
               "caption": "Point 2",
-              "description": "Point 2 on the camera",
-              "useLabelField": false,
-              "minPoints": 1,
-              "maxPoints": 1
+              "description": "Point 2 on the camera"
             },
             {
               "type": "DoubleSpinBox",
@@ -78,13 +72,10 @@
           "caption": "Point 3",
           "items": [
             {
-              "type": "PolygonFigure",
+              "type": "BoxFigure",
               "name": "point3",
               "caption": "Point 3",
-              "description": "Point 3 on the camera",
-              "useLabelField": false,
-              "minPoints": 1,
-              "maxPoints": 1
+              "description": "Point 3 on the camera"
             },
             {
               "type": "DoubleSpinBox",
