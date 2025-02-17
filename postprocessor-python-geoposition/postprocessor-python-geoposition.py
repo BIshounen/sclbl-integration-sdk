@@ -6,7 +6,7 @@ import logging
 import logging.handlers
 import configparser
 from pprint import pformat
-from affine_transform import get_pixel_to_coordinates
+# from affine_transform import get_pixel_to_coordinates
 
 # Add the nxai-utilities python utilities
 if getattr(sys, "frozen", False):
