@@ -32,7 +32,7 @@ logging.basicConfig(
 
 # The name of the postprocessor.
 # This is used to match the definition of the postprocessor with routing.
-Postprocessor_Name = "Python-Geoposition-Postprocessor"
+Postprocessor_Name = "Geoposition-Postprocessor"
 
 # The socket this postprocessor will listen on.
 # This is always given as the first argument when the process is started
