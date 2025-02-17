@@ -1,7 +1,7 @@
 {
   "externalPostprocessors": [
     {
-      "Name": "Geoposition-Postprocessor-Setting",
+      "Name": "Python-Geoposition-Postprocessor",
       "Command": "/opt/networkoptix-metavms/mediaserver/bin/plugins/nxai_plugin/nxai_manager/postprocessors/postprocessor-python-geoposition",
       "SocketPath": "/tmp/python-geoposition-postprocessor.sock",
       "ReceiveInputTensor": false,
