@@ -118,11 +118,10 @@ def main():
 
         lat_lon = {}
 
-        known_points = [
-            {"lat_lon": (0.0, 0.0), "pixel": (None, None)},
-            {"lat_lon": (0.0, 0.0), "pixel": (None, None)},
-            {"lat_lon": (0.0, 0.0), "pixel": (None, None)}
-        ]
+        known_points = {
+            "pixels": [(None, None), (None, None), (None, None)],
+            "lat_lon": [(None, None), (None, None), (None, None)]
+        }
 
         # coefficient for translating to real coordinates because of the Nx three digits mantissa
         mantissa_coefficient = 1000
@@ -142,11 +141,11 @@ def main():
                 )
 
                 if setting_name == "externalprocessor.point1":
-                    known_points[0]['pixel'] = box_center
+                    known_points['pixels'][0] = box_center
                 elif setting_name == "externalprocessor.point2":
-                    known_points[1]['pixel'] = box_center
+                    known_points['pixels'][1] = box_center
                 else:
-                    known_points[2]['pixel'] = box_center
+                    known_points['pixels'][2] = box_center
 
             if setting_name == "externalprocessor.point1Latitude":
                 lat_lon['lat1'] = float(setting_value) * mantissa_coefficient
@@ -161,34 +160,41 @@ def main():
             if setting_name == "externalprocessor.point3Longitude":
                 lat_lon['lon3'] = float(setting_value) * mantissa_coefficient
 
-        known_points[0]['lat_lon'] = (lat_lon['lat1'], lat_lon['lon1'])
-        known_points[1]['lat_lon'] = (lat_lon['lat2'], lat_lon['lon2'])
-        known_points[2]['lat_lon'] = (lat_lon['lat3'], lat_lon['lon3'])
+        known_points['lat_lon'][0] = (lat_lon['lat1'], lat_lon['lon1'])
+        known_points['lat_lon'][1] = (lat_lon['lat2'], lat_lon['lon2'])
+        known_points['lat_lon'][2] = (lat_lon['lat3'], lat_lon['lon3'])
 
         logger.info(f"Got known point coordinates from settings: {known_points}")
 
         # get image parameters
-        # width = input_object['Width']
-        # height = input_object['Height']
+        width = input_object['Width']
+        height = input_object['Height']
 
-        # for class_name, bboxes in input_object["BBoxes_xyxy"].items():
-        #     object_index = 0
-        #     coordinate_counter = 0
-        #     bbox_pixel = [0, 0, 0, 0]
-        #     for bbox_coordinate in bboxes:
-        #         bbox_pixel[coordinate_counter] = bbox_coordinate
-        #         coordinate_counter += 1
-        #         if coordinate_counter == 4:
-        #
-        #             # lat, lon = get_pixel_to_coordinates(known_points=known_points, pixel=bbox_pixel)
-        #
-        #             # input_object[class_name]['AttributeKeys'][object_index].append("Latitude")
-        #             # input_object[class_name]['AttributeKeys'][object_index].append("Longitude")
-        #             # input_object[class_name]['AttributeValues'][object_index].append(lat)
-        #             # input_object[class_name]['AttributeValues'][object_index].append(lon)
-        #
-        #             coordinate_counter = 0
-        #             object_index += 1
+        for class_name, bboxes in input_object["BBoxes_xyxy"].items():
+            object_index = 0
+            coordinate_counter = 0
+            bbox_pixel = [0, 0, 0, 0]
+            for bbox_coordinate in bboxes:
+                bbox_pixel[coordinate_counter] = bbox_coordinate
+                coordinate_counter += 1
+                if coordinate_counter == 4:
+
+                    matrix = compute_transformation_matrix(pixel_points=known_points['pixels'],
+                                                           real_world_points=known_points['lat_lon'])
+
+                    bbox_center = (
+                        (bbox_pixel[2] - bbox_pixel[0])/2 + bbox_pixel[0],
+                        (bbox_pixel[3] - bbox_pixel[1])/2 + bbox_pixel[1]
+                    )
+                    lat, lon = apply_transformation(T=matrix, pixel_coord=bbox_center)
+
+                    input_object[class_name]['AttributeKeys'][object_index].append("Latitude")
+                    input_object[class_name]['AttributeKeys'][object_index].append("Longitude")
+                    input_object[class_name]['AttributeValues'][object_index].append(lat)
+                    input_object[class_name]['AttributeValues'][object_index].append(lon)
+
+                    coordinate_counter = 0
+                    object_index += 1
 
 
         # Read the settings passed through from the AI Manager and add them as attributes
@@ -216,21 +222,21 @@ def main():
         communication_utils.sendMessageOverConnection(connection, output_message)
 
 
-def affine_transform(params, pixel_coordinates, lat_lon_coordinates):
-  a, b, c, d, e, f = params  # Affine parameters
-  pixel_x, pixel_y = pixel_coordinates.T  # Transpose to get x and y
-  # Calculate lat/lon from the affine parameters
-  lat = a * pixel_x + b * pixel_y + c
-  lon = d * pixel_x + e * pixel_y + f
-  # Return the residual (difference) between calculated and actual lat/lon
-  return np.concatenate([lat - lat_lon_coordinates[:, 0], lon - lat_lon_coordinates[:, 1]])
-
-def transform_point(pixel, params):
-  a, b, c, d, e, f = params
-  pixel_x, pixel_y = pixel
-  lat = a * pixel_x + b * pixel_y + c
-  lon = d * pixel_x + e * pixel_y + f
-  return lat, lon
+# def affine_transform(params, pixel_coordinates, lat_lon_coordinates):
+#   a, b, c, d, e, f = params  # Affine parameters
+#   pixel_x, pixel_y = pixel_coordinates.T  # Transpose to get x and y
+#   # Calculate lat/lon from the affine parameters
+#   lat = a * pixel_x + b * pixel_y + c
+#   lon = d * pixel_x + e * pixel_y + f
+#   # Return the residual (difference) between calculated and actual lat/lon
+#   return np.concatenate([lat - lat_lon_coordinates[:, 0], lon - lat_lon_coordinates[:, 1]])
+#
+# def transform_point(pixel, params):
+#   a, b, c, d, e, f = params
+#   pixel_x, pixel_y = pixel
+#   lat = a * pixel_x + b * pixel_y + c
+#   lon = d * pixel_x + e * pixel_y + f
+#   return lat, lon
 
 
 # def get_pixel_to_coordinates(known_points, pixel) -> tuple[float, float]:
