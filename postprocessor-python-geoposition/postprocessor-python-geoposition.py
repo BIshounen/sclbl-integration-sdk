@@ -182,10 +182,10 @@ def main():
 
                     lat, lon = get_pixel_to_coordinates(known_points=known_points, pixel=bbox_pixel)
 
-                    input_object[class_name]['AttributeKeys'][object_index].append("Latitude")
-                    input_object[class_name]['AttributeKeys'][object_index].append("Longitude")
-                    input_object[class_name]['AttributeValues'][object_index].append(lat)
-                    input_object[class_name]['AttributeValues'][object_index].append(lon)
+                    # input_object[class_name]['AttributeKeys'][object_index].append("Latitude")
+                    # input_object[class_name]['AttributeKeys'][object_index].append("Longitude")
+                    # input_object[class_name]['AttributeValues'][object_index].append(lat)
+                    # input_object[class_name]['AttributeValues'][object_index].append(lon)
 
                     coordinate_counter = 0
                     object_index += 1
