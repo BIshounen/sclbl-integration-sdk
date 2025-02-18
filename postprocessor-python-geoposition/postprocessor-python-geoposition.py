@@ -248,6 +248,43 @@ def transform_point(pixel, params):
 #   return transform_point(pixel, optimized_params)
 
 
+def compute_transformation_matrix(pixel_points, real_world_points):
+    """
+    Computes the affine transformation matrix from pixel coordinates to real-world coordinates.
+    pixel_points: List of 3 (x, y) pixel coordinates.
+    real_world_points: List of 3 (X, Y) real-world coordinates.
+    Returns: 2x3 affine transformation matrix.
+    """
+    A = []
+    B = []
+
+    for (px, py), (wx, wy) in zip(pixel_points, real_world_points):
+        A.append([px, py, 1, 0, 0, 0])
+        A.append([0, 0, 0, px, py, 1])
+        B.append(wx)
+        B.append(wy)
+
+    A = np.array(A)
+    B = np.array(B)
+
+    # Solve for the transformation matrix
+    T = np.linalg.lstsq(A, B, rcond=None)[0]
+    return T.reshape(2, 3)
+
+
+def apply_transformation(T, pixel_coord):
+    """
+    Applies the affine transformation matrix to a given pixel coordinate.
+    T: 2x3 affine transformation matrix.
+    pixel_coord: (x, y) pixel coordinate.
+    Returns: (X, Y) real-world coordinate.
+    """
+    px, py = pixel_coord
+    X = T[0, 0] * px + T[0, 1] * py + T[0, 2]
+    Y = T[1, 0] * px + T[1, 1] * py + T[1, 2]
+    return (X, Y)
+
+
 if __name__ == "__main__":
     ## initialize the logger
     logger = logging.getLogger(__name__)
