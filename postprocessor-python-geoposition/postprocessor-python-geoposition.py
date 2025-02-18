@@ -233,19 +233,19 @@ def transform_point(pixel, params):
   return lat, lon
 
 
-# def get_pixel_to_coordinates(known_points, pixel) -> tuple[float, float]:
-#   pixel_coordinates = np.array([p["pixel"] for p in known_points])
-#   lat_lon_coordinates = np.array([p["lat_lon"] for p in known_points])
-#
-#   initial_params = [0, 0, 0, 0, 0, 0]  # Initial guess
-#   result = minimize(
-#     lambda params: np.sum(affine_transform(params, pixel_coordinates, lat_lon_coordinates) ** 2),
-#     initial_params,
-#   )
-#   # Extract optimized parameters
-#   optimized_params = result.x
-#
-#   return transform_point(pixel, optimized_params)
+def get_pixel_to_coordinates(known_points, pixel) -> tuple[float, float]:
+  pixel_coordinates = np.array([p["pixel"] for p in known_points])
+  lat_lon_coordinates = np.array([p["lat_lon"] for p in known_points])
+
+  initial_params = [0, 0, 0, 0, 0, 0]  # Initial guess
+  result = minimize(
+    lambda params: np.sum(affine_transform(params, pixel_coordinates, lat_lon_coordinates) ** 2),
+    initial_params,
+  )
+  # Extract optimized parameters
+  optimized_params = result.x
+
+  return transform_point(pixel, optimized_params)
 
 
 if __name__ == "__main__":
