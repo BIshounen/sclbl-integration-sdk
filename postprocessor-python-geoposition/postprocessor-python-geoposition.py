@@ -124,7 +124,7 @@ def main():
         }
 
         # coefficient for translating to real coordinates because of the Nx three digits mantissa
-        mantissa_coefficient = 1000
+        mantissa_coefficient = 1
 
         device_id = input_object.get("DeviceID", "")
 
