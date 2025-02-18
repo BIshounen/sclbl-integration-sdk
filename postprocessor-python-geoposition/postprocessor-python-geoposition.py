@@ -126,7 +126,7 @@ def main():
 
         device_id = input_object.get("DeviceID", "")
 
-        for setting_name, setting_value in input_object["ExternalProcessorSettings"]:
+        for setting_name, setting_value in input_object["ExternalProcessorSettings"].items():
 
             # Get pixel coordinates
             if setting_name in ("externalprocessor.point1", "externalprocessor.point2", "externalprocessor.point3"):
