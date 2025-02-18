@@ -180,7 +180,7 @@ def main():
                 coordinate_counter += 1
                 if coordinate_counter == 4:
 
-                    lat, lon = get_pixel_to_coordinates(known_points=known_points, pixel=bbox_pixel)
+                    # lat, lon = get_pixel_to_coordinates(known_points=known_points, pixel=bbox_pixel)
 
                     # input_object[class_name]['AttributeKeys'][object_index].append("Latitude")
                     # input_object[class_name]['AttributeKeys'][object_index].append("Longitude")
