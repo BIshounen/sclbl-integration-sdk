@@ -7,6 +7,7 @@ import logging.handlers
 import configparser
 from pprint import pformat
 import json
+from affine_transform import get_pixel_to_coordinates
 
 # Add the nxai-utilities python utilities
 if getattr(sys, "frozen", False):
@@ -163,6 +164,27 @@ def main():
         known_points[2]['lat_lon'] = (lat_lon['lat3'], lat_lon['lon3'])
 
         logger.info(f"Got known point coordinates from settings: {known_points}")
+
+        # get image parameters
+        width = input_object['Width']
+        height = input_object['Height']
+
+        for class_name, bboxes in input_object["BBoxes_xyxy"].items():
+            object_index = 0
+            coordinate_counter = 0
+            bbox_pixel = [0, 0, 0, 0]
+            for bbox_coordinate in bboxes:
+                bbox_pixel[coordinate_counter] = bbox_coordinate
+                coordinate_counter += 1
+                if coordinate_counter == 4:
+
+                    lat, lon = get_pixel_to_coordinates(known_points=known_points, pixel=bbox_pixel)
+
+                    input_object[class_name]['AttributeName'].append(["Latitude", "Longitude"])
+                    input_object[class_name]['AttributeValue'].append([lat, lon])
+
+                    coordinate_counter = 0
+                    object_index += 1
 
 
         # Read the settings passed through from the AI Manager and add them as attributes
