@@ -13,13 +13,13 @@
           "items": [
             {
               "type": "BoxFigure",
-              "name": "point1",
+              "name": "externalprocessor.point1",
               "caption": "Point 1",
               "description": "Point 1 on the camera"
             },
             {
               "type": "DoubleSpinBox",
-              "name": "point1Latitude",
+              "name": "externalprocessor.point1Latitude",
               "caption": "Latitude",
               "description": "Latitude of point 1",
               "defaultValue": 33878.754,
@@ -28,7 +28,7 @@
             },
             {
               "type": "DoubleSpinBox",
-              "name": "point1Longitude",
+              "name": "externalprocessor.point1Longitude",
               "caption": "Longitude",
               "description": "Longitude of point 1",
               "defaultValue": -84450.569,
@@ -43,13 +43,13 @@
           "items": [
             {
               "type": "BoxFigure",
-              "name": "point2",
+              "name": "externalprocessor.point2",
               "caption": "Point 2",
               "description": "Point 2 on the camera"
             },
             {
               "type": "DoubleSpinBox",
-              "name": "point2Latitude",
+              "name": "externalprocessor.point2Latitude",
               "caption": "Latitude",
               "description": "Latitude of point 2",
               "defaultValue": 33878.583,
@@ -58,7 +58,7 @@
             },
             {
               "type": "DoubleSpinBox",
-              "name": "point2Longitude",
+              "name": "externalprocessor.point2Longitude",
               "caption": "Longitude",
               "description": "Longitude of point 2",
               "defaultValue": -84450.848,
@@ -73,13 +73,13 @@
           "items": [
             {
               "type": "BoxFigure",
-              "name": "point3",
+              "name": "externalprocessor.point3",
               "caption": "Point 3",
               "description": "Point 3 on the camera"
             },
             {
               "type": "DoubleSpinBox",
-              "name": "point3Latitude",
+              "name": "externalprocessor.point3Latitude",
               "caption": "Latitude",
               "description": "Latitude of point 3",
               "defaultValue": 33880.493,
@@ -88,7 +88,7 @@
             },
             {
               "type": "DoubleSpinBox",
-              "name": "point3Longitude",
+              "name": "externalprocessor.point3Longitude",
               "caption": "Longitude",
               "description": "Longitude of point 3",
               "defaultValue": -84452.158,

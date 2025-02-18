@@ -6,6 +6,7 @@ import logging
 import logging.handlers
 import configparser
 from pprint import pformat
+import json
 
 # Add the nxai-utilities python utilities
 if getattr(sys, "frozen", False):
@@ -111,6 +112,56 @@ def main():
         # Use pformat to format the deep object
         formatted_unpacked_object = pformat(input_object)
         logging.info(f"Unpacked:\n\n{formatted_unpacked_object}\n\n")
+
+        lat_lon = {}
+
+        known_points = [
+            {"lat_lon": (0.0, 0.0), "pixel": (None, None)},
+            {"lat_lon": (0.0, 0.0), "pixel": (None, None)},
+            {"lat_lon": (0.0, 0.0), "pixel": (None, None)}
+        ]
+
+        # coefficient for translating to real coordinates because of the Nx three digits mantissa
+        mantissa_coefficient = 1000
+
+        device_id = input_object.get("DeviceID", "")
+
+        for setting_name, setting_value in input_object["ExternalProcessorSettings"]:
+
+            # Get pixel coordinates
+            if setting_name in ("externalprocessor.point1", "externalprocessor.point2", "externalprocessor.point3"):
+                figure = json.loads(setting_value)
+                box_center = (
+                    (figure['figure']['points'][1][0] - figure['figure']['points'][0][0])/2,
+                    (figure['figure']['points'][1][1] - figure['figure']['points'][0][1]) / 2,
+                )
+
+                if setting_name == "externalprocessor.point1":
+                    known_points[0]['pixel'] = box_center
+                elif setting_name == "externalprocessor.point2":
+                    known_points[1]['pixel'] = box_center
+                else:
+                    known_points[2]['pixel'] = box_center
+
+            if setting_name == "externalprocessor.point1Latitude":
+                lat_lon['lat1'] = float(setting_value) * mantissa_coefficient
+            if setting_name == "externalprocessor.point1Longitude":
+                lat_lon['lon1'] = float(setting_value) * mantissa_coefficient
+            if setting_name == "externalprocessor.point2Latitude":
+                lat_lon['lat2'] = float(setting_value) * mantissa_coefficient
+            if setting_name == "externalprocessor.point2Longitude":
+                lat_lon['lon2'] = float(setting_value) * mantissa_coefficient
+            if setting_name == "externalprocessor.point3Latitude":
+                lat_lon['lat3'] = float(setting_value) * mantissa_coefficient
+            if setting_name == "externalprocessor.point3Longitude":
+                lat_lon['lon3'] = float(setting_value) * mantissa_coefficient
+
+            known_points[0]['lat_lon'] = (lat_lon['lat1'], lat_lon['lon1'])
+            known_points[1]['lat_lon'] = (lat_lon['lat2'], lat_lon['lon2'])
+            known_points[2]['lat_lon'] = (lat_lon['lat3'], lat_lon['lon3'])
+
+        logger.info(f"Got known point coordinates from settings: {known_points}")
+
 
         # Read the settings passed through from the AI Manager and add them as attributes
         for _, class_data in input_object["ObjectsMetaData"].items():
