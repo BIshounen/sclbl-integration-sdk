@@ -156,9 +156,9 @@ def main():
             if setting_name == "externalprocessor.point3Longitude":
                 lat_lon['lon3'] = float(setting_value) * mantissa_coefficient
 
-            known_points[0]['lat_lon'] = (lat_lon['lat1'], lat_lon['lon1'])
-            known_points[1]['lat_lon'] = (lat_lon['lat2'], lat_lon['lon2'])
-            known_points[2]['lat_lon'] = (lat_lon['lat3'], lat_lon['lon3'])
+        known_points[0]['lat_lon'] = (lat_lon['lat1'], lat_lon['lon1'])
+        known_points[1]['lat_lon'] = (lat_lon['lat2'], lat_lon['lon2'])
+        known_points[2]['lat_lon'] = (lat_lon['lat3'], lat_lon['lon3'])
 
         logger.info(f"Got known point coordinates from settings: {known_points}")
 
