@@ -8,7 +8,7 @@ import configparser
 from pprint import pformat
 import json
 
-# import numpy as np
+import numpy as np
 # from scipy.optimize import minimize
 
 # Add the nxai-utilities python utilities
