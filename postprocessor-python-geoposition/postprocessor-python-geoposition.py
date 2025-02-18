@@ -9,7 +9,7 @@ from pprint import pformat
 import json
 
 import numpy as np
-# from scipy.optimize import minimize
+from scipy.optimize import minimize
 
 # Add the nxai-utilities python utilities
 if getattr(sys, "frozen", False):
