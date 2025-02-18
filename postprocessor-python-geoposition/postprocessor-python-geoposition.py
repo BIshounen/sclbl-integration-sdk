@@ -188,10 +188,10 @@ def main():
                     )
                     lat, lon = apply_transformation(T=matrix, pixel_coord=bbox_center)
 
-                    input_object[class_name]['AttributeKeys'][object_index].append("Latitude")
-                    input_object[class_name]['AttributeKeys'][object_index].append("Longitude")
-                    input_object[class_name]['AttributeValues'][object_index].append(lat)
-                    input_object[class_name]['AttributeValues'][object_index].append(lon)
+                    input_object["ObjectsMetaData"][class_name]['AttributeKeys'][object_index].append("Latitude")
+                    input_object["ObjectsMetaData"][class_name]['AttributeKeys'][object_index].append("Longitude")
+                    input_object["ObjectsMetaData"][class_name]['AttributeValues'][object_index].append(lat)
+                    input_object["ObjectsMetaData"][class_name]['AttributeValues'][object_index].append(lon)
 
                     coordinate_counter = 0
                     object_index += 1
