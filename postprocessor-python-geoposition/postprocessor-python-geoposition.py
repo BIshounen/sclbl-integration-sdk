@@ -132,8 +132,10 @@ def main():
             if setting_name in ("externalprocessor.point1", "externalprocessor.point2", "externalprocessor.point3"):
                 figure = json.loads(setting_value)
                 box_center = (
-                    (figure['figure']['points'][1][0] - figure['figure']['points'][0][0])/2,
-                    (figure['figure']['points'][1][1] - figure['figure']['points'][0][1]) / 2,
+                    (figure['figure']['points'][1][0] - figure['figure']['points'][0][0])/2
+                    + figure['figure']['points'][0][0],
+                    (figure['figure']['points'][1][1] - figure['figure']['points'][0][1]) / 2
+                    + figure['figure']['points'][0][1]
                 )
 
                 if setting_name == "externalprocessor.point1":
