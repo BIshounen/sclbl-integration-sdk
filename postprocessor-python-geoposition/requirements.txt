@@ -2,4 +2,4 @@ pyinstaller
 msgpack
 scipy
 numpy
-pyzmq
+pika

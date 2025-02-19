@@ -1,5 +1,5 @@
 [common]
 debug_level=INFO
 
-[zmq]
-address=tcp://127.0.0.1:5555
+[mq]
+address=localhost

@@ -7,8 +7,8 @@ import logging.handlers
 import configparser
 from pprint import pformat
 import json
-import zmq
 import uuid
+import pika
 
 import numpy as np
 
@@ -44,7 +44,7 @@ Postprocessor_Name = "Python-Geoposition-Postprocessor"
 Postprocessor_Socket_Path = "/tmp/python-geoposition-postprocessor.sock"
 
 # Address of the ZMQ server to send data to
-zmq_server = "tcp://127.0.0.1:5555"
+mq_server = "tcp://127.0.0.1:5555"
 
 # Data Types
 # 1:  //FLOAT
@@ -73,8 +73,8 @@ def config():
         )
         set_log_level(configured_log_level)
 
-        global zmq_server
-        zmq_server = configuration.get("zmq", "address", fallback="tcp://127.0.0.1:5555")
+        global mq_server
+        mq_server = configuration.get("mq", "address", fallback="localhost")
 
         for section in configuration.sections():
             logger.info("config section: " + section)
@@ -104,10 +104,10 @@ def main():
     logger.debug("Creating socket at " + Postprocessor_Socket_Path)
     server = communication_utils.startUnixSocketServer(Postprocessor_Socket_Path)
 
-    # Start a zmq PUSH connection
-    context = zmq.Context()
-    zmq_socket = context.socket(zmq.PUSH)
-    zmq_socket.connect(zmq_server)
+    # start MQ
+    connection = pika.BlockingConnection(pika.ConnectionParameters(mq_server))
+    channel = connection.channel()
+    channel.queue_declare(queue="AIManager")
 
     # Wait for messages in a loop
     while True:
@@ -223,7 +223,9 @@ def main():
                     coordinate_counter = 0
                     object_index += 1
 
-        zmq_socket.send_json(message)
+        channel.basic_publish(exchange='',
+                              routing_key='AIManager',
+                              body=json.dumps(message))
 
         formatted_unpacked_object = pformat(input_object)
         logging.info(f"Packing:\n\n{formatted_unpacked_object}\n\n")
