@@ -9,7 +9,6 @@ from pprint import pformat
 import json
 
 import numpy as np
-from scipy.optimize import minimize
 
 # Add the nxai-utilities python utilities
 if getattr(sys, "frozen", False):
@@ -124,7 +123,7 @@ def main():
         }
 
         # coefficient for translating to real coordinates because of the Nx three digits mantissa
-        mantissa_coefficient = 1
+        mantissa_coefficient = 1000
 
         device_id = input_object.get("DeviceID", "")
 
