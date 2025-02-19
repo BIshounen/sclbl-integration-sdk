@@ -41,6 +41,9 @@ Postprocessor_Name = "Python-Geoposition-Postprocessor"
 # But it can be manually defined as well, as long as it is the same as the socket path in the runtime settings
 Postprocessor_Socket_Path = "/tmp/python-geoposition-postprocessor.sock"
 
+# Address of the ZMQ server to send data to
+zmq_server = "localhost:5555"
+
 # Data Types
 # 1:  //FLOAT
 # 2:  //UINT8
@@ -67,6 +70,9 @@ def config():
             "common", "debug_level", fallback="INFO"
         )
         set_log_level(configured_log_level)
+
+        global zmq_server
+        zmq_server = configuration.get("zmq", "address", fallback="localhost:5555")
 
         for section in configuration.sections():
             logger.info("config section: " + section)

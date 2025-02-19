@@ -1,2 +1,5 @@
 [common]
 debug_level=INFO
+
+[zmq]
+address=127.0.0.1:5555
