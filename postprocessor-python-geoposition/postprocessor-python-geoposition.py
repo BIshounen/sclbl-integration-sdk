@@ -105,7 +105,7 @@ def main():
 
     # Start a zmq PUSH connection
     context = zmq.Context()
-    zmq_socket = context.Socket(zmq.PUSH)
+    zmq_socket = context.socket(zmq.PUSH)
     zmq_socket.connect(zmq_server)
 
     # Wait for messages in a loop
