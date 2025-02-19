@@ -115,7 +115,7 @@ def main():
 
     # start MQ
     credentials = pika.PlainCredentials(pika_login, pika_password)
-    parameters = pika.ConnectionParameters('xoaualgg:qhQe-2-53DavGUCYTOhi3OUnH2r1Ehl2@cow.rmq2.cloudamqp.com/xoaualgg')
+    parameters = pika.URLParameters(mq_server)
     # parameters = pika.ConnectionParameters(mq_server, pika_port, '/', credentials)
     connection = pika.BlockingConnection(parameters)
     channel = connection.channel()
