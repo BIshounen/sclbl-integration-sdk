@@ -190,8 +190,8 @@ def main():
 
                     input_object["ObjectsMetaData"][class_name]['AttributeKeys'][object_index].append("Latitude")
                     input_object["ObjectsMetaData"][class_name]['AttributeKeys'][object_index].append("Longitude")
-                    input_object["ObjectsMetaData"][class_name]['AttributeValues'][object_index].append(lat)
-                    input_object["ObjectsMetaData"][class_name]['AttributeValues'][object_index].append(lon)
+                    input_object["ObjectsMetaData"][class_name]['AttributeValues'][object_index].append(str(lat))
+                    input_object["ObjectsMetaData"][class_name]['AttributeValues'][object_index].append(str(lon))
 
                     coordinate_counter = 0
                     object_index += 1
