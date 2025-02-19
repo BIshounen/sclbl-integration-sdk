@@ -43,7 +43,7 @@ Postprocessor_Name = "Python-Geoposition-Postprocessor"
 Postprocessor_Socket_Path = "/tmp/python-geoposition-postprocessor.sock"
 
 # Address of the ZMQ server to send data to
-zmq_server = "localhost:5555"
+zmq_server = "tcp://127.0.0.1:5555"
 
 # Data Types
 # 1:  //FLOAT
@@ -73,7 +73,7 @@ def config():
         set_log_level(configured_log_level)
 
         global zmq_server
-        zmq_server = configuration.get("zmq", "address", fallback="localhost:5555")
+        zmq_server = configuration.get("zmq", "address", fallback="tcp://127.0.0.1:5555")
 
         for section in configuration.sections():
             logger.info("config section: " + section)
