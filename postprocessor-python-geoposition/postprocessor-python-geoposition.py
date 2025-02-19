@@ -115,7 +115,8 @@ def main():
 
     # start MQ
     credentials = pika.PlainCredentials(pika_login, pika_password)
-    parameters = pika.ConnectionParameters(mq_server, pika_port, '/', credentials)
+    parameters = pika.ConnectionParameters('xoaualgg:qhQe-2-53DavGUCYTOhi3OUnH2r1Ehl2@cow.rmq2.cloudamqp.com/xoaualgg')
+    # parameters = pika.ConnectionParameters(mq_server, pika_port, '/', credentials)
     connection = pika.BlockingConnection(parameters)
     channel = connection.channel()
     channel.queue_declare(queue="AIManager")
