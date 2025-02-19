@@ -183,8 +183,8 @@ def main():
                                                            real_world_points=known_points['lat_lon'])
 
                     bbox_center = (
-                        (bbox_pixel[2] - bbox_pixel[0])/2 + bbox_pixel[0],
-                        (bbox_pixel[3] - bbox_pixel[1])/2 + bbox_pixel[1]
+                        ((bbox_pixel[2] - bbox_pixel[0])/2 + bbox_pixel[0])/width,
+                        ((bbox_pixel[3] - bbox_pixel[1])/2 + bbox_pixel[1])/height
                     )
                     lat, lon = apply_transformation(T=matrix, pixel_coord=bbox_center)
 
