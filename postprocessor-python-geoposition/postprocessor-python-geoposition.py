@@ -196,20 +196,6 @@ def main():
                     coordinate_counter = 0
                     object_index += 1
 
-
-        # Read the settings passed through from the AI Manager and add them as attributes
-        for _, class_data in input_object["ObjectsMetaData"].items():
-            for object_index in range(len(class_data["AttributeKeys"])):
-                for setting_name, setting_value in input_object[
-                    "ExternalProcessorSettings"
-                ].items():
-                    if setting_name == "externalprocessor.attributeName":
-                        class_data["AttributeKeys"][object_index].append(setting_value)
-                    if setting_name == "externalprocessor.attributeValue":
-                        class_data["AttributeValues"][object_index].append(
-                            setting_value
-                        )
-
         formatted_unpacked_object = pformat(input_object)
         logging.info(f"Packing:\n\n{formatted_unpacked_object}\n\n")
 
