@@ -8,6 +8,7 @@ import configparser
 from pprint import pformat
 import json
 import zmq
+import uuid
 
 import numpy as np
 
@@ -212,7 +213,7 @@ def main():
                     object_id = input_object["ObjectsMetaData"][class_name]['ObjectIDs'][object_index]
                     object_data = {
                         "type": class_name,
-                        "object_id": object_id,
+                        "object_id": uuid.UUID(bytes=object_id),
                         "latitude": lat,
                         "longitude": lon
                     }
