@@ -3,3 +3,6 @@ debug_level=INFO
 
 [mq]
 address=localhost
+port=5672
+login=guest
+password=guest

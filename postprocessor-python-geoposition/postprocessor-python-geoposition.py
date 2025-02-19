@@ -45,6 +45,9 @@ Postprocessor_Socket_Path = "/tmp/python-geoposition-postprocessor.sock"
 
 # Address of the ZMQ server to send data to
 mq_server = "tcp://127.0.0.1:5555"
+pika_login = "guest"
+pika_password = "guest"
+pika_port = 5672
 
 # Data Types
 # 1:  //FLOAT
@@ -75,6 +78,12 @@ def config():
 
         global mq_server
         mq_server = configuration.get("mq", "address", fallback="localhost")
+        global pika_login
+        pika_login = configuration.get("mq", "login", fallback="guest")
+        global pika_password
+        pika_password = configuration.get("mq", "password", fallback="guest")
+        global pika_port
+        pika_port = configuration.get("mq", "port", fallback="5672")
 
         for section in configuration.sections():
             logger.info("config section: " + section)
@@ -105,7 +114,9 @@ def main():
     server = communication_utils.startUnixSocketServer(Postprocessor_Socket_Path)
 
     # start MQ
-    connection = pika.BlockingConnection(pika.ConnectionParameters(mq_server))
+    credentials = pika.PlainCredentials(pika_login, pika_password)
+    parameters = pika.ConnectionParameters(mq_server, pika_port, '/', credentials)
+    connection = pika.BlockingConnection(parameters)
     channel = connection.channel()
     channel.queue_declare(queue="AIManager")
 
