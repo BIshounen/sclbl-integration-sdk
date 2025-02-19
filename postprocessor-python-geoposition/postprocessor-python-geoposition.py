@@ -213,7 +213,7 @@ def main():
                     object_id = input_object["ObjectsMetaData"][class_name]['ObjectIDs'][object_index]
                     object_data = {
                         "type": class_name,
-                        "object_id": uuid.UUID(bytes=object_id),
+                        "object_id": str(uuid.UUID(bytes=object_id)),
                         "latitude": lat,
                         "longitude": lon
                     }
