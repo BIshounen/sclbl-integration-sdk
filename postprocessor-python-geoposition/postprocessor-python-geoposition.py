@@ -7,6 +7,7 @@ import logging.handlers
 import configparser
 from pprint import pformat
 import json
+import zmq
 
 import numpy as np
 
@@ -101,6 +102,11 @@ def main():
     # Start socket listener to receive messages from NXAI runtime
     logger.debug("Creating socket at " + Postprocessor_Socket_Path)
     server = communication_utils.startUnixSocketServer(Postprocessor_Socket_Path)
+
+    # Start a zmq PUSH connection
+    context = zmq.Context()
+    zmq_socket = context.Socket(zmq.PUSH)
+    zmq_socket.connect(zmq_server)
 
     # Wait for messages in a loop
     while True:
