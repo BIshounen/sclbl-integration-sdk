@@ -138,6 +138,9 @@ def main():
         mantissa_coefficient = 1000
 
         device_id = input_object.get("DeviceID", "")
+        timestamp = input_object.get("Timestamp", "")
+
+        message = {"device_id": device_id, "timestamp": timestamp}
 
         for setting_name, setting_value in input_object["ExternalProcessorSettings"].items():
 
@@ -182,6 +185,7 @@ def main():
         height = input_object['Height']
 
         for class_name, bboxes in input_object["BBoxes_xyxy"].items():
+            objects = []
             object_index = 0
             coordinate_counter = 0
             bbox_pixel = [0, 0, 0, 0]
@@ -204,8 +208,20 @@ def main():
                     input_object["ObjectsMetaData"][class_name]['AttributeValues'][object_index].append(str(lat))
                     input_object["ObjectsMetaData"][class_name]['AttributeValues'][object_index].append(str(lon))
 
+                    object_id = input_object["ObjectsMetaData"][class_name]['ObjectIDs'][object_index]
+                    object_data = {
+                        "type": class_name,
+                        "object_id": object_id,
+                        "latitude": lat,
+                        "longitude": lon
+                    }
+
+                    message['objects'].append(object_data)
+
                     coordinate_counter = 0
                     object_index += 1
+
+        zmq_socket.send_json(message)
 
         formatted_unpacked_object = pformat(input_object)
         logging.info(f"Packing:\n\n{formatted_unpacked_object}\n\n")
