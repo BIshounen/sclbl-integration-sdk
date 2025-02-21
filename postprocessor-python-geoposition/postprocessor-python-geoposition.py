@@ -175,17 +175,17 @@ def main():
                     known_points['pixels'][2] = box_center
 
             if setting_name == "externalprocessor.point1Latitude":
-                lat_lon['lat1'] = float(setting_value) * mantissa_coefficient
+                lat_lon['lat1'] = float(setting_value) / mantissa_coefficient
             if setting_name == "externalprocessor.point1Longitude":
-                lat_lon['lon1'] = float(setting_value) * mantissa_coefficient
+                lat_lon['lon1'] = float(setting_value) / mantissa_coefficient
             if setting_name == "externalprocessor.point2Latitude":
-                lat_lon['lat2'] = float(setting_value) * mantissa_coefficient
+                lat_lon['lat2'] = float(setting_value) / mantissa_coefficient
             if setting_name == "externalprocessor.point2Longitude":
-                lat_lon['lon2'] = float(setting_value) * mantissa_coefficient
+                lat_lon['lon2'] = float(setting_value) / mantissa_coefficient
             if setting_name == "externalprocessor.point3Latitude":
-                lat_lon['lat3'] = float(setting_value) * mantissa_coefficient
+                lat_lon['lat3'] = float(setting_value) / mantissa_coefficient
             if setting_name == "externalprocessor.point3Longitude":
-                lat_lon['lon3'] = float(setting_value) * mantissa_coefficient
+                lat_lon['lon3'] = float(setting_value) / mantissa_coefficient
 
         known_points['lat_lon'][0] = (lat_lon['lat1'], lat_lon['lon1'])
         known_points['lat_lon'][1] = (lat_lon['lat2'], lat_lon['lon2'])
