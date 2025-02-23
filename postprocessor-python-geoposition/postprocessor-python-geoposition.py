@@ -157,14 +157,18 @@ def main():
 
         for setting_name, setting_value in input_object["ExternalProcessorSettings"].items():
 
+            # get image parameters
+            width = input_object['Width']
+            height = input_object['Height']
+
             # Get pixel coordinates
             if setting_name in ("externalprocessor.point1", "externalprocessor.point2", "externalprocessor.point3"):
                 figure = json.loads(setting_value)
                 box_center = (
-                    (figure['figure']['points'][1][0] - figure['figure']['points'][0][0])/2
-                    + figure['figure']['points'][0][0],
-                    (figure['figure']['points'][1][1] - figure['figure']['points'][0][1]) / 2
-                    + figure['figure']['points'][0][1]
+                    ((figure['figure']['points'][1][0] - figure['figure']['points'][0][0])/2
+                    + figure['figure']['points'][0][0]) * width,
+                    ((figure['figure']['points'][1][1] - figure['figure']['points'][0][1]) / 2
+                    + figure['figure']['points'][0][1]) * height
                 )
 
                 if setting_name == "externalprocessor.point1":
@@ -193,10 +197,6 @@ def main():
 
         logger.info(f"Got known point coordinates from settings: {known_points}")
 
-        # get image parameters
-        width = input_object['Width']
-        height = input_object['Height']
-
         message['objects'] = []
 
         for class_name, bboxes in input_object["BBoxes_xyxy"].items():
@@ -212,8 +212,8 @@ def main():
                                                            real_world_points=known_points['lat_lon'])
 
                     bbox_center = (
-                        ((bbox_pixel[2] - bbox_pixel[0])/2 + bbox_pixel[0])/width,
-                        ((bbox_pixel[3] - bbox_pixel[1])/2 + bbox_pixel[1])/height
+                        ((bbox_pixel[2] - bbox_pixel[0])/2 + bbox_pixel[0]),
+                        ((bbox_pixel[3] - bbox_pixel[1])/2 + bbox_pixel[1])
                     )
                     lat, lon = apply_transformation(T=matrix, pixel_coord=bbox_center)
 
