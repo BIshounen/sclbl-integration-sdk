@@ -96,6 +96,36 @@
               "maxValue": 180000.000
             }
           ]
+        },
+        {
+          "type": "GroupBox",
+          "caption": "Point 4",
+          "items": [
+            {
+              "type": "BoxFigure",
+              "name": "externalprocessor.point4",
+              "caption": "Point 4",
+              "description": "Point 3 on the camera"
+            },
+            {
+              "type": "DoubleSpinBox",
+              "name": "externalprocessor.point4Latitude",
+              "caption": "Latitude",
+              "description": "Latitude of point 4",
+              "defaultValue": 33880.493,
+              "minValue": -90000.000,
+              "maxValue": 90000.000
+            },
+            {
+              "type": "DoubleSpinBox",
+              "name": "externalprocessor.point4Longitude",
+              "caption": "Longitude",
+              "description": "Longitude of point 4",
+              "defaultValue": -84452.158,
+              "minValue": -180000.000,
+              "maxValue": 180000.000
+            }
+          ]
         }
       ]
     }

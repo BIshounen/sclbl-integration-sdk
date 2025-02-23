@@ -144,8 +144,8 @@ def main():
         lat_lon = {}
 
         known_points = {
-            "pixels": [(None, None), (None, None), (None, None)],
-            "lat_lon": [(None, None), (None, None), (None, None)]
+            "pixels": [(None, None), (None, None), (None, None), (None, None)],
+            "lat_lon": [(None, None), (None, None), (None, None), (None, None)]
         }
 
         # coefficient for translating to real coordinates because of the Nx three digits mantissa
@@ -163,7 +163,11 @@ def main():
             height = input_object['Height']
 
             # Get pixel coordinates
-            if setting_name in ("externalprocessor.point1", "externalprocessor.point2", "externalprocessor.point3"):
+            if setting_name in ("externalprocessor.point1",
+                                "externalprocessor.point2",
+                                "externalprocessor.point3",
+                                "externalprocessor.point4"
+                                ):
                 figure = json.loads(setting_value)
                 box_center = (
                     ((figure['figure']['points'][1][0] - figure['figure']['points'][0][0])/2
@@ -176,8 +180,10 @@ def main():
                     known_points['pixels'][0] = box_center
                 elif setting_name == "externalprocessor.point2":
                     known_points['pixels'][1] = box_center
-                else:
+                elif setting_name == "externalprocessor.point3":
                     known_points['pixels'][2] = box_center
+                else:
+                    known_points['pixels'][3] = box_center
 
             if setting_name == "externalprocessor.point1Latitude":
                 lat_lon['lat1'] = float(setting_value) / mantissa_coefficient
@@ -191,10 +197,15 @@ def main():
                 lat_lon['lat3'] = float(setting_value) / mantissa_coefficient
             if setting_name == "externalprocessor.point3Longitude":
                 lat_lon['lon3'] = float(setting_value) / mantissa_coefficient
+            if setting_name == "externalprocessor.point4Latitude":
+                lat_lon['lat4'] = float(setting_value) / mantissa_coefficient
+            if setting_name == "externalprocessor.point4Longitude":
+                lat_lon['lon4'] = float(setting_value) / mantissa_coefficient
 
         known_points['lat_lon'][0] = (lat_lon['lat1'], lat_lon['lon1'])
         known_points['lat_lon'][1] = (lat_lon['lat2'], lat_lon['lon2'])
         known_points['lat_lon'][2] = (lat_lon['lat3'], lat_lon['lon3'])
+        known_points['lat_lon'][3] = (lat_lon['lat4'], lat_lon['lon4'])
 
         logger.info(f"Got known point coordinates from settings: {known_points}")
 
