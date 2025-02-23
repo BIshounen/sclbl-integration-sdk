@@ -288,7 +288,8 @@ def compute_homography(data_queue, pixel_points, real_world_points):
     pixel_points = np.array(pixel_points, dtype=np.float32)
     real_world_points = np.array(real_world_points, dtype=np.float32)
 
-    H, _ = cv2.findHomography(pixel_points, real_world_points, method=cv2.RANSAC)
+    # H, _ = cv2.findHomography(pixel_points, real_world_points, method=cv2.RANSAC)
+    H = None
     data_queue.put(H)
     data_queue.task_done()
 
