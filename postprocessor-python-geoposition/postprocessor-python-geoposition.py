@@ -12,6 +12,8 @@ import pika
 
 import numpy as np
 import cv2
+import queue
+import threading
 
 # Add the nxai-utilities python utilities
 if getattr(sys, "frozen", False):
@@ -122,6 +124,14 @@ def main():
     channel = connection.channel()
     channel.queue_declare(queue="AIManager")
 
+    data_queue = queue.Queue()
+    H = None
+
+    known_points_cache = {
+        "pixels": [(None, None), (None, None), (None, None), (None, None)],
+        "lat_lon": [(None, None), (None, None), (None, None), (None, None)]
+    }
+
     # Wait for messages in a loop
     while True:
         # Wait for input message from runtime
@@ -209,51 +219,62 @@ def main():
 
         logger.info(f"Got known point coordinates from settings: {known_points}")
 
-        H = compute_homography(known_points['pixels'], known_points['lat_lon'])
+        if known_points != known_points_cache:
+            H = None
+            compute_thread = threading.Thread(
+                target=lambda: compute_homography(data_queue, known_points['pixels'], known_points['lat_lon']))
 
-        message['objects'] = []
+            compute_thread.start()
 
-        for class_name, bboxes in input_object["BBoxes_xyxy"].items():
-            object_index = 0
-            coordinate_counter = 0
-            bbox_pixel = [0, 0, 0, 0]
-            for bbox_coordinate in bboxes:
-                bbox_pixel[coordinate_counter] = bbox_coordinate
-                coordinate_counter += 1
-                if coordinate_counter == 4:
+        if H is None and data_queue.not_empty:
+            H = data_queue.get()
+            logging.info('got H')
 
-                    bbox_center = (
-                        ((bbox_pixel[2] - bbox_pixel[0])/2 + bbox_pixel[0]),
-                        ((bbox_pixel[3] - bbox_pixel[1])/2 + bbox_pixel[1])
-                    )
-                    lat, lon = apply_homography(H, bbox_center)
+        if H is not None:
 
-                    input_object["ObjectsMetaData"][class_name]['AttributeKeys'][object_index].append("Latitude")
-                    input_object["ObjectsMetaData"][class_name]['AttributeKeys'][object_index].append("Longitude")
-                    input_object["ObjectsMetaData"][class_name]['AttributeValues'][object_index].append(str(lat))
-                    input_object["ObjectsMetaData"][class_name]['AttributeValues'][object_index].append(str(lon))
+            message['objects'] = []
 
-                    object_id = input_object["ObjectsMetaData"][class_name]['ObjectIDs'][object_index]
-                    object_data = {
-                        "type": class_name,
-                        "object_id": str(uuid.UUID(bytes=object_id)),
-                        "latitude": lat,
-                        "longitude": lon
-                    }
+            for class_name, bboxes in input_object["BBoxes_xyxy"].items():
+                object_index = 0
+                coordinate_counter = 0
+                bbox_pixel = [0, 0, 0, 0]
+                for bbox_coordinate in bboxes:
+                    bbox_pixel[coordinate_counter] = bbox_coordinate
+                    coordinate_counter += 1
+                    if coordinate_counter == 4:
 
-                    message['objects'].append(object_data)
+                        bbox_center = (
+                            ((bbox_pixel[2] - bbox_pixel[0])/2 + bbox_pixel[0]),
+                            ((bbox_pixel[3] - bbox_pixel[1])/2 + bbox_pixel[1])
+                        )
+                        lat, lon = apply_homography(H, bbox_center)
 
-                    coordinate_counter = 0
-                    object_index += 1
+                        input_object["ObjectsMetaData"][class_name]['AttributeKeys'][object_index].append("Latitude")
+                        input_object["ObjectsMetaData"][class_name]['AttributeKeys'][object_index].append("Longitude")
+                        input_object["ObjectsMetaData"][class_name]['AttributeValues'][object_index].append(str(lat))
+                        input_object["ObjectsMetaData"][class_name]['AttributeValues'][object_index].append(str(lon))
 
-        channel.basic_publish(exchange='',
-                              routing_key='AIManager',
-                              body=json.dumps(message))
+                        object_id = input_object["ObjectsMetaData"][class_name]['ObjectIDs'][object_index]
+                        object_data = {
+                            "type": class_name,
+                            "object_id": str(uuid.UUID(bytes=object_id)),
+                            "latitude": lat,
+                            "longitude": lon
+                        }
 
-        formatted_unpacked_object = pformat(input_object)
-        logging.info(f"Packing:\n\n{formatted_unpacked_object}\n\n")
+                        message['objects'].append(object_data)
 
-        logger.info("Added attributes to all objects.")
+                        coordinate_counter = 0
+                        object_index += 1
+
+            channel.basic_publish(exchange='',
+                                  routing_key='AIManager',
+                                  body=json.dumps(message))
+
+            formatted_unpacked_object = pformat(input_object)
+            logging.info(f"Packing:\n\n{formatted_unpacked_object}\n\n")
+
+            logger.info("Added attributes to all objects.")
 
         # Write object back to string
         output_message = communication_utils.writeInferenceResults(input_object)
@@ -262,13 +283,14 @@ def main():
         communication_utils.sendMessageOverConnection(connection, output_message)
 
 
-def compute_homography(pixel_points, real_world_points):
+def compute_homography(data_queue, pixel_points, real_world_points):
     """Computes a homography transformation matrix using OpenCV."""
     pixel_points = np.array(pixel_points, dtype=np.float32)
     real_world_points = np.array(real_world_points, dtype=np.float32)
 
     H, _ = cv2.findHomography(pixel_points, real_world_points, method=cv2.RANSAC)
-    return H
+    data_queue.put(H)
+    data_queue.task_done()
 
 
 def apply_homography(H, pixel_coord):
