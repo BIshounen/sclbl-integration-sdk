@@ -3,3 +3,4 @@ msgpack
 scipy
 numpy
 pika
+opencv-python

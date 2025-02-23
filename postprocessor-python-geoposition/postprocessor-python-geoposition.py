@@ -11,6 +11,7 @@ import uuid
 import pika
 
 import numpy as np
+import cv2
 
 # Add the nxai-utilities python utilities
 if getattr(sys, "frozen", False):
@@ -197,6 +198,8 @@ def main():
 
         logger.info(f"Got known point coordinates from settings: {known_points}")
 
+        H = compute_homography(known_points['pixels'], known_points['lat_lon'])
+
         message['objects'] = []
 
         for class_name, bboxes in input_object["BBoxes_xyxy"].items():
@@ -208,14 +211,11 @@ def main():
                 coordinate_counter += 1
                 if coordinate_counter == 4:
 
-                    matrix = compute_transformation_matrix(pixel_points=known_points['pixels'],
-                                                           real_world_points=known_points['lat_lon'])
-
                     bbox_center = (
                         ((bbox_pixel[2] - bbox_pixel[0])/2 + bbox_pixel[0]),
                         ((bbox_pixel[3] - bbox_pixel[1])/2 + bbox_pixel[1])
                     )
-                    lat, lon = apply_transformation(T=matrix, pixel_coord=bbox_center)
+                    lat, lon = apply_homography(H, bbox_center)
 
                     input_object["ObjectsMetaData"][class_name]['AttributeKeys'][object_index].append("Latitude")
                     input_object["ObjectsMetaData"][class_name]['AttributeKeys'][object_index].append("Longitude")
@@ -251,40 +251,20 @@ def main():
         communication_utils.sendMessageOverConnection(connection, output_message)
 
 
-def compute_transformation_matrix(pixel_points, real_world_points):
-    """
-    Computes the affine transformation matrix from pixel coordinates to real-world coordinates.
-    pixel_points: List of 3 (x, y) pixel coordinates.
-    real_world_points: List of 3 (X, Y) real-world coordinates.
-    Returns: 2x3 affine transformation matrix.
-    """
-    A = []
-    B = []
+def compute_homography(pixel_points, real_world_points):
+    """Computes a homography transformation matrix using OpenCV."""
+    pixel_points = np.array(pixel_points, dtype=np.float32)
+    real_world_points = np.array(real_world_points, dtype=np.float32)
 
-    for (px, py), (wx, wy) in zip(pixel_points, real_world_points):
-        A.append([px, py, 1, 0, 0, 0])
-        A.append([0, 0, 0, px, py, 1])
-        B.append(wx)
-        B.append(wy)
-
-    A = np.array(A)
-    B = np.array(B)
-
-    # Solve for the transformation matrix
-    T = np.linalg.lstsq(A, B, rcond=-1)[0]
-    return T.reshape(2, 3)
+    H, _ = cv2.findHomography(pixel_points, real_world_points, method=cv2.RANSAC)
+    return H
 
 
-def apply_transformation(T, pixel_coord):
-    """
-    Applies the affine transformation matrix to a given pixel coordinate.
-    T: 2x3 affine transformation matrix.
-    pixel_coord: (x, y) pixel coordinate.
-    Returns: (X, Y) real-world coordinate.
-    """
+def apply_homography(H, pixel_coord):
+    """Applies a homography transformation to a pixel coordinate."""
     px, py = pixel_coord
-    X = T[0, 0] * px + T[0, 1] * py + T[0, 2]
-    Y = T[1, 0] * px + T[1, 1] * py + T[1, 2]
+    transformed = np.dot(H, np.array([px, py, 1]))
+    X, Y = transformed[:2] / transformed[2]  # Normalize by Z
     return (X, Y)
 
 
