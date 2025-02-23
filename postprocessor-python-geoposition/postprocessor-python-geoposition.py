@@ -119,12 +119,11 @@ def main():
     # start MQ
     credentials = pika.PlainCredentials(pika_login, pika_password)
     parameters = pika.URLParameters(mq_server)
-    # parameters = pika.ConnectionParameters(mq_server, pika_port, '/', credentials)
     connection = pika.BlockingConnection(parameters)
     channel = connection.channel()
     channel.queue_declare(queue="AIManager")
 
-    # data_queue = queue.Queue()
+    data_queue = queue.Queue()
     H = None
 
     known_points_cache = {
@@ -221,60 +220,60 @@ def main():
 
         if known_points != known_points_cache:
             H = None
-            # compute_thread = threading.Thread(
-            #     target=lambda: compute_homography(data_queue, known_points['pixels'], known_points['lat_lon']))
-            #
-            # compute_thread.start()
+            compute_thread = threading.Thread(
+                target=lambda: compute_homography(data_queue, known_points['pixels'], known_points['lat_lon']))
 
-        # if H is None and data_queue.not_empty:
-        #     H = data_queue.get()
-        #     logging.info('got H')
+            compute_thread.start()
 
-        # if H is not None:
-        #
-        #     message['objects'] = []
-        #
-        #     for class_name, bboxes in input_object["BBoxes_xyxy"].items():
-        #         object_index = 0
-        #         coordinate_counter = 0
-        #         bbox_pixel = [0, 0, 0, 0]
-        #         for bbox_coordinate in bboxes:
-        #             bbox_pixel[coordinate_counter] = bbox_coordinate
-        #             coordinate_counter += 1
-        #             if coordinate_counter == 4:
-        #
-        #                 bbox_center = (
-        #                     ((bbox_pixel[2] - bbox_pixel[0])/2 + bbox_pixel[0]),
-        #                     ((bbox_pixel[3] - bbox_pixel[1])/2 + bbox_pixel[1])
-        #                 )
-        #                 lat, lon = apply_homography(H, bbox_center)
-        #
-        #                 input_object["ObjectsMetaData"][class_name]['AttributeKeys'][object_index].append("Latitude")
-        #                 input_object["ObjectsMetaData"][class_name]['AttributeKeys'][object_index].append("Longitude")
-        #                 input_object["ObjectsMetaData"][class_name]['AttributeValues'][object_index].append(str(lat))
-        #                 input_object["ObjectsMetaData"][class_name]['AttributeValues'][object_index].append(str(lon))
-        #
-        #                 object_id = input_object["ObjectsMetaData"][class_name]['ObjectIDs'][object_index]
-        #                 object_data = {
-        #                     "type": class_name,
-        #                     "object_id": str(uuid.UUID(bytes=object_id)),
-        #                     "latitude": lat,
-        #                     "longitude": lon
-        #                 }
-        #
-        #                 message['objects'].append(object_data)
-        #
-        #                 coordinate_counter = 0
-        #                 object_index += 1
-        #
-        #     channel.basic_publish(exchange='',
-        #                           routing_key='AIManager',
-        #                           body=json.dumps(message))
-        #
-        #     formatted_unpacked_object = pformat(input_object)
-        #     logging.info(f"Packing:\n\n{formatted_unpacked_object}\n\n")
-        #
-        #     logger.info("Added attributes to all objects.")
+        if H is None and data_queue.not_empty:
+            H = data_queue.get()
+            logging.info('got H')
+
+        if H is not None:
+
+            message['objects'] = []
+
+            for class_name, bboxes in input_object["BBoxes_xyxy"].items():
+                object_index = 0
+                coordinate_counter = 0
+                bbox_pixel = [0, 0, 0, 0]
+                for bbox_coordinate in bboxes:
+                    bbox_pixel[coordinate_counter] = bbox_coordinate
+                    coordinate_counter += 1
+                    if coordinate_counter == 4:
+
+                        bbox_center = (
+                            ((bbox_pixel[2] - bbox_pixel[0])/2 + bbox_pixel[0]),
+                            ((bbox_pixel[3] - bbox_pixel[1])/2 + bbox_pixel[1])
+                        )
+                        lat, lon = apply_homography(H, bbox_center)
+
+                        input_object["ObjectsMetaData"][class_name]['AttributeKeys'][object_index].append("Latitude")
+                        input_object["ObjectsMetaData"][class_name]['AttributeKeys'][object_index].append("Longitude")
+                        input_object["ObjectsMetaData"][class_name]['AttributeValues'][object_index].append(str(lat))
+                        input_object["ObjectsMetaData"][class_name]['AttributeValues'][object_index].append(str(lon))
+
+                        object_id = input_object["ObjectsMetaData"][class_name]['ObjectIDs'][object_index]
+                        object_data = {
+                            "type": class_name,
+                            "object_id": str(uuid.UUID(bytes=object_id)),
+                            "latitude": lat,
+                            "longitude": lon
+                        }
+
+                        message['objects'].append(object_data)
+
+                        coordinate_counter = 0
+                        object_index += 1
+
+            channel.basic_publish(exchange='',
+                                  routing_key='AIManager',
+                                  body=json.dumps(message))
+
+            formatted_unpacked_object = pformat(input_object)
+            logging.info(f"Packing:\n\n{formatted_unpacked_object}\n\n")
+
+            logger.info("Added attributes to all objects.")
 
         # Write object back to string
         output_message = communication_utils.writeInferenceResults(input_object)
@@ -283,23 +282,23 @@ def main():
         communication_utils.sendMessageOverConnection(connection, output_message)
 
 
-# def compute_homography(data_queue, pixel_points, real_world_points):
-#     """Computes a homography transformation matrix using OpenCV."""
-#     pixel_points = np.array(pixel_points, dtype=np.float32)
-#     real_world_points = np.array(real_world_points, dtype=np.float32)
-#
-#     # H, _ = cv2.findHomography(pixel_points, real_world_points, method=cv2.RANSAC)
-#     H = None
-#     data_queue.put(H)
-#     data_queue.task_done()
+def compute_homography(data_queue, pixel_points, real_world_points):
+    """Computes a homography transformation matrix using OpenCV."""
+    pixel_points = np.array(pixel_points, dtype=np.float32)
+    real_world_points = np.array(real_world_points, dtype=np.float32)
+
+    # H, _ = cv2.findHomography(pixel_points, real_world_points, method=cv2.RANSAC)
+    H = None
+    data_queue.put(H)
+    data_queue.task_done()
 
 
-# def apply_homography(H, pixel_coord):
-#     """Applies a homography transformation to a pixel coordinate."""
-#     px, py = pixel_coord
-#     transformed = np.dot(H, np.array([px, py, 1]))
-#     X, Y = transformed[:2] / transformed[2]  # Normalize by Z
-#     return (X, Y)
+def apply_homography(H, pixel_coord):
+    """Applies a homography transformation to a pixel coordinate."""
+    px, py = pixel_coord
+    transformed = np.dot(H, np.array([px, py, 1]))
+    X, Y = transformed[:2] / transformed[2]  # Normalize by Z
+    return (X, Y)
 
 
 if __name__ == "__main__":
