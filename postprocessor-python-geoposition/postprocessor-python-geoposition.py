@@ -271,7 +271,7 @@ def compute_transformation_matrix(pixel_points, real_world_points):
     B = np.array(B)
 
     # Solve for the transformation matrix
-    T = np.linalg.lstsq(A, B, rcond=None)[0]
+    T = np.linalg.lstsq(A, B, rcond=-1)[0]
     return T.reshape(2, 3)
 
 
