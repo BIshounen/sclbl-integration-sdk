@@ -221,10 +221,10 @@ def main():
 
         if known_points != known_points_cache:
             H = None
-            compute_thread = threading.Thread(
-                target=lambda: compute_homography(data_queue, known_points['pixels'], known_points['lat_lon']))
-
-            compute_thread.start()
+            # compute_thread = threading.Thread(
+            #     target=lambda: compute_homography(data_queue, known_points['pixels'], known_points['lat_lon']))
+            #
+            # compute_thread.start()
 
         if H is None and data_queue.not_empty:
             H = data_queue.get()
