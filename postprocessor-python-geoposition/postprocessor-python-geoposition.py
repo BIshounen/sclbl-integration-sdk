@@ -283,23 +283,23 @@ def main():
         communication_utils.sendMessageOverConnection(connection, output_message)
 
 
-def compute_homography(data_queue, pixel_points, real_world_points):
-    """Computes a homography transformation matrix using OpenCV."""
-    pixel_points = np.array(pixel_points, dtype=np.float32)
-    real_world_points = np.array(real_world_points, dtype=np.float32)
+# def compute_homography(data_queue, pixel_points, real_world_points):
+#     """Computes a homography transformation matrix using OpenCV."""
+#     pixel_points = np.array(pixel_points, dtype=np.float32)
+#     real_world_points = np.array(real_world_points, dtype=np.float32)
+#
+#     # H, _ = cv2.findHomography(pixel_points, real_world_points, method=cv2.RANSAC)
+#     H = None
+#     data_queue.put(H)
+#     data_queue.task_done()
 
-    # H, _ = cv2.findHomography(pixel_points, real_world_points, method=cv2.RANSAC)
-    H = None
-    data_queue.put(H)
-    data_queue.task_done()
 
-
-def apply_homography(H, pixel_coord):
-    """Applies a homography transformation to a pixel coordinate."""
-    px, py = pixel_coord
-    transformed = np.dot(H, np.array([px, py, 1]))
-    X, Y = transformed[:2] / transformed[2]  # Normalize by Z
-    return (X, Y)
+# def apply_homography(H, pixel_coord):
+#     """Applies a homography transformation to a pixel coordinate."""
+#     px, py = pixel_coord
+#     transformed = np.dot(H, np.array([px, py, 1]))
+#     X, Y = transformed[:2] / transformed[2]  # Normalize by Z
+#     return (X, Y)
 
 
 if __name__ == "__main__":
