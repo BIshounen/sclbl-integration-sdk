@@ -226,9 +226,9 @@ def main():
             #
             # compute_thread.start()
 
-        if H is None and data_queue.not_empty:
-            H = data_queue.get()
-            logging.info('got H')
+        # if H is None and data_queue.not_empty:
+        #     H = data_queue.get()
+        #     logging.info('got H')
 
         if H is not None:
 
