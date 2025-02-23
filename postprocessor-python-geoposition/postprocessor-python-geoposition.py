@@ -10,10 +10,10 @@ import json
 import uuid
 import pika
 
-import numpy as np
-import cv2
-import queue
-import threading
+# import numpy as np
+# import cv2
+# import queue
+# import threading
 
 # Add the nxai-utilities python utilities
 if getattr(sys, "frozen", False):
@@ -124,7 +124,7 @@ def main():
     channel = connection.channel()
     channel.queue_declare(queue="AIManager")
 
-    data_queue = queue.Queue()
+    # data_queue = queue.Queue()
     H = None
 
     known_points_cache = {
@@ -230,51 +230,51 @@ def main():
         #     H = data_queue.get()
         #     logging.info('got H')
 
-        if H is not None:
-
-            message['objects'] = []
-
-            for class_name, bboxes in input_object["BBoxes_xyxy"].items():
-                object_index = 0
-                coordinate_counter = 0
-                bbox_pixel = [0, 0, 0, 0]
-                for bbox_coordinate in bboxes:
-                    bbox_pixel[coordinate_counter] = bbox_coordinate
-                    coordinate_counter += 1
-                    if coordinate_counter == 4:
-
-                        bbox_center = (
-                            ((bbox_pixel[2] - bbox_pixel[0])/2 + bbox_pixel[0]),
-                            ((bbox_pixel[3] - bbox_pixel[1])/2 + bbox_pixel[1])
-                        )
-                        lat, lon = apply_homography(H, bbox_center)
-
-                        input_object["ObjectsMetaData"][class_name]['AttributeKeys'][object_index].append("Latitude")
-                        input_object["ObjectsMetaData"][class_name]['AttributeKeys'][object_index].append("Longitude")
-                        input_object["ObjectsMetaData"][class_name]['AttributeValues'][object_index].append(str(lat))
-                        input_object["ObjectsMetaData"][class_name]['AttributeValues'][object_index].append(str(lon))
-
-                        object_id = input_object["ObjectsMetaData"][class_name]['ObjectIDs'][object_index]
-                        object_data = {
-                            "type": class_name,
-                            "object_id": str(uuid.UUID(bytes=object_id)),
-                            "latitude": lat,
-                            "longitude": lon
-                        }
-
-                        message['objects'].append(object_data)
-
-                        coordinate_counter = 0
-                        object_index += 1
-
-            channel.basic_publish(exchange='',
-                                  routing_key='AIManager',
-                                  body=json.dumps(message))
-
-            formatted_unpacked_object = pformat(input_object)
-            logging.info(f"Packing:\n\n{formatted_unpacked_object}\n\n")
-
-            logger.info("Added attributes to all objects.")
+        # if H is not None:
+        #
+        #     message['objects'] = []
+        #
+        #     for class_name, bboxes in input_object["BBoxes_xyxy"].items():
+        #         object_index = 0
+        #         coordinate_counter = 0
+        #         bbox_pixel = [0, 0, 0, 0]
+        #         for bbox_coordinate in bboxes:
+        #             bbox_pixel[coordinate_counter] = bbox_coordinate
+        #             coordinate_counter += 1
+        #             if coordinate_counter == 4:
+        #
+        #                 bbox_center = (
+        #                     ((bbox_pixel[2] - bbox_pixel[0])/2 + bbox_pixel[0]),
+        #                     ((bbox_pixel[3] - bbox_pixel[1])/2 + bbox_pixel[1])
+        #                 )
+        #                 lat, lon = apply_homography(H, bbox_center)
+        #
+        #                 input_object["ObjectsMetaData"][class_name]['AttributeKeys'][object_index].append("Latitude")
+        #                 input_object["ObjectsMetaData"][class_name]['AttributeKeys'][object_index].append("Longitude")
+        #                 input_object["ObjectsMetaData"][class_name]['AttributeValues'][object_index].append(str(lat))
+        #                 input_object["ObjectsMetaData"][class_name]['AttributeValues'][object_index].append(str(lon))
+        #
+        #                 object_id = input_object["ObjectsMetaData"][class_name]['ObjectIDs'][object_index]
+        #                 object_data = {
+        #                     "type": class_name,
+        #                     "object_id": str(uuid.UUID(bytes=object_id)),
+        #                     "latitude": lat,
+        #                     "longitude": lon
+        #                 }
+        #
+        #                 message['objects'].append(object_data)
+        #
+        #                 coordinate_counter = 0
+        #                 object_index += 1
+        #
+        #     channel.basic_publish(exchange='',
+        #                           routing_key='AIManager',
+        #                           body=json.dumps(message))
+        #
+        #     formatted_unpacked_object = pformat(input_object)
+        #     logging.info(f"Packing:\n\n{formatted_unpacked_object}\n\n")
+        #
+        #     logger.info("Added attributes to all objects.")
 
         # Write object back to string
         output_message = communication_utils.writeInferenceResults(input_object)
