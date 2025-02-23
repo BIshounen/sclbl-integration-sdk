@@ -11,9 +11,9 @@ import uuid
 import pika
 
 import numpy as np
-import cv2
-import queue
-import threading
+# import cv2
+# import queue
+# import threading
 
 # Add the nxai-utilities python utilities
 if getattr(sys, "frozen", False):
