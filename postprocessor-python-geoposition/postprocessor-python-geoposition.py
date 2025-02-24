@@ -68,7 +68,7 @@ pika_port = 5672
 
 
 def config():
-    logger.info("Reading configuration from:" + CONFIG_FILE)
+    logger.debug("Reading configuration from:" + CONFIG_FILE)
 
     try:
         configuration = configparser.ConfigParser()
@@ -89,9 +89,9 @@ def config():
         pika_port = configuration.get("mq", "port", fallback="5672")
 
         for section in configuration.sections():
-            logger.info("config section: " + section)
+            logger.debug("config section: " + section)
             for key in configuration[section]:
-                logger.info("config key: " + key + " = " + configuration[section][key])
+                logger.debug("config key: " + key + " = " + configuration[section][key])
 
     except Exception as e:
         logger.error(e, exc_info=True)
@@ -107,7 +107,7 @@ def set_log_level(level):
 
 
 def signal_handler(sig, _):
-    logger.info("Received interrupt signal: " + str(sig))
+    logger.debug("Received interrupt signal: " + str(sig))
     sys.exit(0)
 
 
@@ -216,7 +216,7 @@ def main():
         known_points['lat_lon'][2] = (lat_lon['lat3'], lat_lon['lon3'])
         known_points['lat_lon'][3] = (lat_lon['lat4'], lat_lon['lon4'])
 
-        logger.info(f"Got known point coordinates from settings: {known_points}")
+        logger.debug(f"Got known point coordinates from settings: {known_points}")
 
         if known_points != known_points_cache:
             H = None
@@ -273,7 +273,7 @@ def main():
             formatted_unpacked_object = pformat(input_object)
             logging.info(f"Packing:\n\n{formatted_unpacked_object}\n\n")
 
-            logger.info("Added attributes to all objects.")
+            logger.debug("Added attributes to all objects.")
 
         # Write object back to string
         output_message = communication_utils.writeInferenceResults(input_object)
@@ -305,12 +305,12 @@ if __name__ == "__main__":
     ## initialize the logger
     logger = logging.getLogger(__name__)
 
-    logger.info("Location: " + str(script_location))
+    logger.debug("Location: " + str(script_location))
 
     ## read configuration file if it's available
     config()
 
-    logger.info("Initializing example plugin")
+    logger.debug("Initializing example plugin")
     logger.debug("Input parameters: " + str(sys.argv))
 
     # Parse input arguments
