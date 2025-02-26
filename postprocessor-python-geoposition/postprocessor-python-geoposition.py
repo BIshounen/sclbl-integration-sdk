@@ -179,7 +179,7 @@ def main():
                                 ):
                 figure = json.loads(setting_value)
 
-                if 'figure' in figure:
+                if 'figure' in figure and 'points' in figure['figure']:
                     box_center = (
                         ((figure['figure']['points'][1][0] - figure['figure']['points'][0][0])/2
                         + figure['figure']['points'][0][0]) * width,
@@ -227,6 +227,7 @@ def main():
                 target=lambda: compute_homography(data_queue, known_points['pixels'], known_points['lat_lon']))
 
             compute_thread.start()
+            known_points_cache = known_points
 
         if H is None and data_queue.not_empty:
             H = data_queue.get()
