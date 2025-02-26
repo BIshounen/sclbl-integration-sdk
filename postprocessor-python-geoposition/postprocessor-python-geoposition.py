@@ -178,21 +178,23 @@ def main():
                                 "externalprocessor.point4"
                                 ):
                 figure = json.loads(setting_value)
-                box_center = (
-                    ((figure['figure']['points'][1][0] - figure['figure']['points'][0][0])/2
-                    + figure['figure']['points'][0][0]) * width,
-                    ((figure['figure']['points'][1][1] - figure['figure']['points'][0][1]) / 2
-                    + figure['figure']['points'][0][1]) * height
-                )
 
-                if setting_name == "externalprocessor.point1":
-                    known_points['pixels'][0] = box_center
-                elif setting_name == "externalprocessor.point2":
-                    known_points['pixels'][1] = box_center
-                elif setting_name == "externalprocessor.point3":
-                    known_points['pixels'][2] = box_center
-                else:
-                    known_points['pixels'][3] = box_center
+                if 'figure' in figure:
+                    box_center = (
+                        ((figure['figure']['points'][1][0] - figure['figure']['points'][0][0])/2
+                        + figure['figure']['points'][0][0]) * width,
+                        ((figure['figure']['points'][1][1] - figure['figure']['points'][0][1]) / 2
+                        + figure['figure']['points'][0][1]) * height
+                    )
+
+                    if setting_name == "externalprocessor.point1":
+                        known_points['pixels'][0] = box_center
+                    elif setting_name == "externalprocessor.point2":
+                        known_points['pixels'][1] = box_center
+                    elif setting_name == "externalprocessor.point3":
+                        known_points['pixels'][2] = box_center
+                    else:
+                        known_points['pixels'][3] = box_center
 
             if setting_name == "externalprocessor.point1Latitude":
                 lat_lon['lat1'] = float(setting_value) / mantissa_coefficient
@@ -217,8 +219,10 @@ def main():
         known_points['lat_lon'][3] = (lat_lon['lat4'], lat_lon['lon4'])
 
         logger.debug(f"Got known point coordinates from settings: {known_points}")
+        coordinates = [pixel[0] for pixel in known_points['pixels']] + [pixel[1] for pixel in known_points['pixels']]
+        if known_points != known_points_cache\
+            and all(coordinate is not None for coordinate in coordinates):
 
-        if known_points != known_points_cache:
             H = None
             compute_thread = threading.Thread(
                 target=lambda: compute_homography(data_queue, known_points['pixels'], known_points['lat_lon']))
