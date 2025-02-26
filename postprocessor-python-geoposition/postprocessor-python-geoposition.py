@@ -224,7 +224,7 @@ def main():
 
         coordinates = [pixel[0] for pixel in known_points['pixels']] + [pixel[1] for pixel in known_points['pixels']]
 
-        logging.info(known_points != known_points_cache)
+        logging.info(known_points != known_points_cache and all(coordinate is not None for coordinate in coordinates))
 
         if known_points != known_points_cache and all(coordinate is not None for coordinate in coordinates):
             H = None
