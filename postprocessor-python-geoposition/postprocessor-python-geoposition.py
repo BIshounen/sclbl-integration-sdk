@@ -148,7 +148,7 @@ def main():
 
         # Use pformat to format the deep object
         formatted_unpacked_object = pformat(input_object)
-        logging.info(f"Unpacked:\n\n{formatted_unpacked_object}\n\n")
+        logging.debug(f"Unpacked:\n\n{formatted_unpacked_object}\n\n")
 
         lat_lon = {}
 
@@ -233,7 +233,7 @@ def main():
 
         if H is None and data_queue.not_empty:
             H = data_queue.get()
-            logging.info('got H')
+            logging.debug('got H')
 
         if H is not None:
 
