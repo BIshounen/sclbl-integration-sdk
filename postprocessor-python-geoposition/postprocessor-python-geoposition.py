@@ -179,7 +179,7 @@ def main():
                                 ):
                 figure = json.loads(setting_value)
 
-                if 'figure' in figure and 'points' in figure['figure']:
+                if figure is not None and 'figure' in figure and 'points' in figure['figure']:
                     box_center = (
                         ((figure['figure']['points'][1][0] - figure['figure']['points'][0][0])/2
                         + figure['figure']['points'][0][0]) * width,
@@ -275,7 +275,7 @@ def main():
                                   body=json.dumps(message))
 
             formatted_unpacked_object = pformat(input_object)
-            logging.info(f"Packing:\n\n{formatted_unpacked_object}\n\n")
+            logging.debug(f"Packing:\n\n{formatted_unpacked_object}\n\n")
 
             logger.debug("Added attributes to all objects.")
 
