@@ -179,6 +179,8 @@ def main():
                                 ):
                 figure = json.loads(setting_value)
 
+                logging.info(figure)
+
                 if figure is not None and 'figure' in figure and 'points' in figure['figure']:
                     box_center = (
                         ((figure['figure']['points'][1][0] - figure['figure']['points'][0][0])/2
