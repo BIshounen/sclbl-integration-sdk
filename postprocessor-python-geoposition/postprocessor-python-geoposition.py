@@ -235,7 +235,7 @@ def main():
             known_points_cache = known_points
 
         logging.info(H is None and data_queue.not_empty)
-        if H is None and data_queue.not_empty:
+        if H is None and not data_queue.empty():
             H = data_queue.get()
             logging.debug('got H')
 
