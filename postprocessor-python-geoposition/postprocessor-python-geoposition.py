@@ -224,7 +224,7 @@ def main():
 
         coordinates = [pixel[0] for pixel in known_points['pixels']] + [pixel[1] for pixel in known_points['pixels']]
 
-        logging.info(known_points != known_points_cache and all(coordinate is not None for coordinate in coordinates))
+        logging.debug(known_points != known_points_cache and all(coordinate is not None for coordinate in coordinates))
 
         if known_points != known_points_cache and all(coordinate is not None for coordinate in coordinates):
             H = None
@@ -234,7 +234,7 @@ def main():
             compute_thread.start()
             known_points_cache = known_points
 
-        logging.info(H is None and not data_queue.empty())
+        logging.debug(H is None and not data_queue.empty())
         if H is None and not data_queue.empty():
             H = data_queue.get()
             logging.debug('got H')
