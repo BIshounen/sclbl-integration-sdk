@@ -179,7 +179,7 @@ def main():
                                 ):
                 figure = json.loads(setting_value)
 
-                logging.info(figure)
+                logging.debug(figure)
 
                 if figure['figure'] is not None:
                     box_center = (
