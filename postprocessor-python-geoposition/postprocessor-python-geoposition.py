@@ -221,9 +221,12 @@ def main():
         known_points['lat_lon'][3] = (lat_lon['lat4'], lat_lon['lon4'])
 
         logger.debug(f"Got known point coordinates from settings: {known_points}")
-        coordinates = [pixel[0] for pixel in known_points['pixels']] + [pixel[1] for pixel in known_points['pixels']]
-        if known_points != known_points_cache and all(coordinate is not None for coordinate in coordinates):
 
+        coordinates = [pixel[0] for pixel in known_points['pixels']] + [pixel[1] for pixel in known_points['pixels']]
+
+        logging.info(known_points != known_points_cache)
+
+        if known_points != known_points_cache and all(coordinate is not None for coordinate in coordinates):
             H = None
             compute_thread = threading.Thread(
                 target=lambda: compute_homography(data_queue, known_points['pixels'], known_points['lat_lon']))
