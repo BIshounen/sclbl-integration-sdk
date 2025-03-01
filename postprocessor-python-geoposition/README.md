@@ -19,6 +19,9 @@ This post-processor converts bounding boxes into real-world coordinates for AI M
    sudo apt install python3-pip
    sudo apt install python3.12-venv
    ```
+  **This plugin also uses opencv python library, so additional dependencies might be needed to make the plugin. Check build logs for any unresolved dependencies.**
+
+
 - Change into the directory created for the project if you're not already there.
    ```shell
    cd sclbl-integration-sdk/
@@ -59,3 +62,8 @@ This post-processor converts bounding boxes into real-world coordinates for AI M
 - In the post-processor settings, specify four reference points that map camera pixels to real-world **latitude/longitude** coordinates:
 ![alt text](https://github.com/BIshounen/sclbl-integration-sdk/blob/main/postprocessor-python-geoposition/readme_images/settings.png?raw=true)
 
+# Troubleshooting
+
+### Plugin doesn't start
+
+The plugin might be built without resolving opencv dependencies, try to build from scratch and check logs. If dependencies are not met, use `sudo apt install` to install necessary dependencies.
