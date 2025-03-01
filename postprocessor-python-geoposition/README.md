@@ -59,7 +59,7 @@ This post-processor converts bounding boxes into real-world coordinates for AI M
    - Add the settings found in `external_postprocessors.json` to the corresponding section.
 - Restart the server.
 - Start the **AI Manager** and configure the pipeline with the post-processor according to its manual: [AI Manager Guide](https://nx.docs.scailable.net/nx-ai-manager/get-started-with-the-nx-ai-manager-plugin).
-- In the post-processor settings, specify four reference points that map camera pixels to real-world **latitude/longitude** coordinates:
+- In the post-processor settings, specify four reference points that map camera pixels to real-world **latitude/longitude** coordinates. Due to limitations of Nx desktop client settings, values must be entered multiplied by 1000, e.g. 33.878746 must be entered as 33878.756, due to 3 digits precision limitation:
 ![alt text](https://github.com/BIshounen/sclbl-integration-sdk/blob/main/postprocessor-python-geoposition/readme_images/settings.png?raw=true)
 
 # Troubleshooting
