@@ -1,0 +1,57 @@
+{
+  "externalPostprocessors": [
+    {
+      "Name": "Python-Pass-Event-Postprocessor",
+      "Command": "/opt/networkoptix-metavms/mediaserver/bin/plugins/nxai_plugin/nxai_manager/postprocessors/postprocessor-python-pass-event",
+      "SocketPath": "/tmp/python-pass-event-postprocessor.sock",
+      "ReceiveInputTensor": false,
+      "ReceiveConfidenceData": false,
+      "Settings": [
+        {
+          "type": "Repeater",
+          "count": 10,
+          "startIndex": 0,
+          "template": {
+            "type": "GroupBox",
+            "caption": "Point #",
+            "filledCheckItems": [
+              "externalprocessor.point#.figure"
+            ],
+            "items": [
+              {
+                "type": "BoxFigure",
+                "name": "externalprocessor.point#.figure",
+                "caption": "Point #",
+                "description": "Point # on the camera"
+              },
+              {
+                "type": "DoubleSpinBox",
+                "name": "externalprocessor.point#.latitude",
+                "caption": "Latitude",
+                "description": "Latitude of point #",
+                "defaultValue": 33878.754,
+                "minValue": -90000.000,
+                "maxValue": 90000.000
+              },
+              {
+                "type": "DoubleSpinBox",
+                "name": "externalprocessor.point#.longitude",
+                "caption": "Longitude",
+                "description": "Longitude of point #",
+                "defaultValue": -84450.569,
+                "minValue": -180000.000,
+                "maxValue": 180000.000
+              }
+            ]
+          }
+        }
+      ],
+      "Events": [
+        {
+          "ID": "nx.ai_manager_postprocessor.pass_event",
+          "Name": "Pass Event"
+        }
+      ]
+    }
+  ]
+}
