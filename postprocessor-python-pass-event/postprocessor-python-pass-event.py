@@ -6,8 +6,8 @@ import signal
 import logging
 import logging.handlers
 import configparser
-import numpy as np
-import cv2
+# import numpy as np
+# import cv2
 import json
 import uuid
 from pprint import pformat
