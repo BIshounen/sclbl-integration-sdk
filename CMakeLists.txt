@@ -37,10 +37,13 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/nxai-utilities/include)
 # add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/postprocessor-cloud-inference-example)
 
 # Add Geoposition Postprocessor Python project
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/postprocessor-python-geoposition)
+# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/postprocessor-python-geoposition)
+
+# Add Geoposition Postprocessor Python project
+# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/postprocessor-python-geoposition)
 
 # Add Preprocessor Python project
-# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/preprocessor-python-example)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/preprocessor-python-pass-event)
 
 # Add installation option
 install(TARGETS
