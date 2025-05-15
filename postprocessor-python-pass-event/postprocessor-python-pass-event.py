@@ -166,6 +166,7 @@ def main():
         known_points[point_num]['lat_lon'] = (known_points[point_num]['lat_lon'][0], setting_value)
 
       if known_points != known_points_cache and len(known_points) >= 4:
+        logging.info(known_points)
         H = compute_homography(known_points)
 
         known_points_cache = known_points
