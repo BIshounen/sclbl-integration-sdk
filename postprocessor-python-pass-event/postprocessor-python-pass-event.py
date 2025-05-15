@@ -97,11 +97,11 @@ def main():
   server = communication_utils.startUnixSocketServer(Postprocessor_Socket_Path)
 
   # coefficient for translating to real coordinates because of the Nx three digits mantissa
-  mantissa_coefficient = 1000
-
-  H = None
-
-  known_points_cache = {}
+  # mantissa_coefficient = 1000
+  #
+  # H = None
+  #
+  # known_points_cache = {}
 
   # Wait for messages in a loop
   while True:
