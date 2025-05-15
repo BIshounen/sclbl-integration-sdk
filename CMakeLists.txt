@@ -43,7 +43,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/nxai-utilities/include)
 # add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/postprocessor-python-geoposition)
 
 # Add Preprocessor Python project
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/preprocessor-python-pass-event)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/postprocessor-python-pass-event)
 
 # Add installation option
 install(TARGETS
