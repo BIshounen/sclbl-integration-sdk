@@ -205,30 +205,30 @@ def main():
     communication_utils.sendMessageOverConnection(connection, output_message)
 
 
-# def compute_homography(known_points):
-#   """Computes a homography transformation matrix using OpenCV."""
-#
-#   pixel_points = []
-#   real_world_points = []
-#
-#   for key, values in known_points.items():
-#     pixel_points.append(values['pixel'])
-#     real_world_points.append(values['lat_lon'])
-#
-#   pixel_points = np.array(pixel_points, dtype=np.float32)
-#   real_world_points = np.array(real_world_points, dtype=np.float32)
-#
-#   H, _ = cv2.findHomography(pixel_points, real_world_points, method=cv2.RANSAC)
-#
-#   return H
-#
-#
-# def apply_homography(H, pixel_coord):
-#   """Applies a homography transformation to a pixel coordinate."""
-#   px, py = pixel_coord
-#   transformed = np.dot(H, np.array([px, py, 1]))
-#   X, Y = transformed[:2] / transformed[2]  # Normalize by Z
-#   return (X, Y)
+def compute_homography(known_points):
+  """Computes a homography transformation matrix using OpenCV."""
+
+  pixel_points = []
+  real_world_points = []
+
+  for key, values in known_points.items():
+    pixel_points.append(values['pixel'])
+    real_world_points.append(values['lat_lon'])
+
+  pixel_points = np.array(pixel_points, dtype=np.float32)
+  real_world_points = np.array(real_world_points, dtype=np.float32)
+
+  H, _ = cv2.findHomography(pixel_points, real_world_points, method=cv2.RANSAC)
+
+  return H
+
+
+def apply_homography(H, pixel_coord):
+  """Applies a homography transformation to a pixel coordinate."""
+  px, py = pixel_coord
+  transformed = np.dot(H, np.array([px, py, 1]))
+  X, Y = transformed[:2] / transformed[2]  # Normalize by Z
+  return (X, Y)
 
 
 if __name__ == "__main__":
