@@ -122,6 +122,8 @@ def main():
 
     known_points = {}
 
+    logger.info(input_object)
+
     for setting_name, setting_value in input_object["ExternalProcessorSettings"].items():
       # get image parameters
       width = input_object['Width']
@@ -211,7 +213,6 @@ def compute_homography(known_points):
 
   pixel_points = []
   real_world_points = []
-
   for key, values in known_points.items():
     pixel_points.append(values['pixel'])
     real_world_points.append(values['lat_lon'])
