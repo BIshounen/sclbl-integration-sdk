@@ -162,6 +162,7 @@ def main():
 
       known_points_cache = known_points
 
+    logger.info(H)
     if H is not None:
 
       for class_name, bboxes in input_object["BBoxes_xyxy"].items():
