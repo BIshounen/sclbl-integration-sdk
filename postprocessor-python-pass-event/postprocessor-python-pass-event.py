@@ -198,6 +198,8 @@ def main():
 def compute_homography(known_points):
   """Computes a homography transformation matrix using OpenCV."""
 
+  logger.info('computing homography')
+
   pixel_points = []
   real_world_points = []
   for known_point in known_points:
@@ -213,6 +215,7 @@ def compute_homography(known_points):
 
 
 def apply_homography(H, pixel_coord):
+  logger.info('applying homography')
   """Applies a homography transformation to a pixel coordinate."""
   px, py = pixel_coord
   transformed = np.dot(H, np.array([px, py, 1]))
