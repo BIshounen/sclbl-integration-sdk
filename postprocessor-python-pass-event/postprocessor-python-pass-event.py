@@ -205,7 +205,7 @@ def main():
             coordinate_counter = 0
             object_index += 1
 
-      for key in objects_cache.keys():
+      for key in list(objects_cache.keys()):
         if objects_cache[key]['last_time_seen'] >= timeout:
           caption = "Object passed"
           description = json.dumps(objects_cache[key])
