@@ -135,7 +135,7 @@ def main():
 
       logger.info(figure)
 
-      if figure['figure'] is None:
+      if figure.get('figure') is None:
         continue
 
       box_center = (
