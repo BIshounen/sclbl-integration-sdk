@@ -131,7 +131,7 @@ def main():
     for i in range(0, 10):
 
       key_string = f"externalprocessor.point{i}.figure"
-      figure = input_object["ExternalProcessorSettings"][key_string]
+      figure = json.loads(input_object["ExternalProcessorSettings"][key_string])
 
       logger.info(figure)
 
