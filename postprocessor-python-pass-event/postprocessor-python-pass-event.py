@@ -205,11 +205,11 @@ def main():
             coordinate_counter = 0
             object_index += 1
 
-      for object_id, data_array in objects_cache.items():
-        if data_array['last_time_seen'] >= timeout:
+      for key in objects_cache.keys():
+        if objects_cache[key]['last_time_seen'] >= timeout:
           caption = "Object passed"
-          description = json.dumps(data_array)
-          del objects_cache[object_id]
+          description = json.dumps(objects_cache[key])
+          del objects_cache[key]
 
           if "Events" not in input_object:
             input_object["Events"] = []
