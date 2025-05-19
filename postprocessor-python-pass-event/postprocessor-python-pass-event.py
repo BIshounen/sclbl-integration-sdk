@@ -133,6 +133,8 @@ def main():
       key_string = f"externalprocessor.point{i}.figure"
       figure = input_object["ExternalProcessorSettings"][key_string]
 
+      logger.info(figure)
+
       if figure['figure'] is None:
         continue
 
