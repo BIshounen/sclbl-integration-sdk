@@ -189,9 +189,6 @@ def main():
             input_object["ObjectsMetaData"][class_name]['AttributeValues'][object_index].append(str(lat))
             input_object["ObjectsMetaData"][class_name]['AttributeValues'][object_index].append(str(lon))
 
-            coordinate_counter = 0
-            object_index += 1
-
             # manage object cache
             object_id = input_object["ObjectsMetaData"][class_name]['ObjectIDs'][object_index]
             if object_id not in objects_cache:
@@ -204,6 +201,9 @@ def main():
               objects_cache[object_id]['type'].append(str(class_name))
               objects_cache[object_id]['last_time_seen'] = time.time()
               objects_cache[object_id]['coordinates'].append((lat, lon))
+
+            coordinate_counter = 0
+            object_index += 1
 
       for object_id, data_array in objects_cache.items():
         if data_array['last_time_seen'] >= timeout:
