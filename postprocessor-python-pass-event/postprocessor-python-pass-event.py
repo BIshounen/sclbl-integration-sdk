@@ -148,9 +148,9 @@ def main():
       known_points.append({'pixel': box_center})
 
       key_string = f"externalprocessor.point{i}.latitude"
-      latitude = input_object["ExternalProcessorSettings"][key_string]/mantissa_coefficient
+      latitude = float(input_object["ExternalProcessorSettings"][key_string])/mantissa_coefficient
       key_string = f"externalprocessor.point{i}.longitude"
-      longitude = input_object["ExternalProcessorSettings"][key_string]/mantissa_coefficient
+      longitude = float(input_object["ExternalProcessorSettings"][key_string])/mantissa_coefficient
 
       known_points[i]['lat_lon'] = (latitude, longitude)
 
