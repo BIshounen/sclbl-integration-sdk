@@ -209,7 +209,7 @@ def main():
         if data_array['last_time_seen'] >= timeout:
           caption = "Object passed"
           description = json.dumps(data_array)
-          objects_cache.pop(object_id)
+          del objects_cache[object_id]
 
           if "Events" not in input_object:
             input_object["Events"] = []
