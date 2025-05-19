@@ -6,6 +6,8 @@ import signal
 import logging
 import logging.handlers
 import configparser
+import time
+
 import numpy as np
 import cv2
 import json
@@ -103,6 +105,8 @@ def main():
 
   known_points_cache = {}
 
+  objects_cache = {}
+
   # Wait for messages in a loop
   while True:
     # Wait for input message from runtime
@@ -127,6 +131,8 @@ def main():
     # get image parameters
     width = input_object['Width']
     height = input_object['Height']
+
+    timeout = float(input_object["ExternalProcessorSettings"]["externalprocessor.timeout"])
 
     for i in range(0, 10):
 
@@ -159,7 +165,6 @@ def main():
     logging.info(known_points != known_points_cache)
     if known_points != known_points_cache and len(known_points) >= 4:
       H = compute_homography(known_points)
-
       known_points_cache = known_points
 
     logger.info(H)
@@ -187,7 +192,36 @@ def main():
             coordinate_counter = 0
             object_index += 1
 
-      formatted_unpacked_object = pformat(input_object)
+            # manage object cache
+            object_id = input_object["ObjectsMetaData"][class_name]['ObjectIDs'][object_index]
+            if object_id not in objects_cache:
+              objects_cache[object_id] = {
+                'type': [str(class_name)],
+                'last_time_seen': time.time(),
+                'coordinates': [lat, lon]
+              }
+            else:
+              objects_cache[object_id]['type'].append(str(class_name))
+              objects_cache[object_id]['last_time_seen'] = time.time()
+              objects_cache[object_id]['coordinates'].append((lat, lon))
+
+      for object_id, data_array in objects_cache.items():
+        if data_array['last_time_seen'] >= timeout:
+          caption = "Object passed"
+          description = json.dumps(data_array)
+          objects_cache.pop(object_id)
+
+          if "Events" not in input_object:
+            input_object["Events"] = []
+          input_object["Events"].append(
+            {
+              "ID": "nx.ai_manager_postprocessor.pass_event",
+              "Caption": caption,
+              "Description": description,
+            }
+          )
+
+
 
     logger.info("Added event to output")
 

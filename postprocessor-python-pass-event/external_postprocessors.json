@@ -8,6 +8,15 @@
       "ReceiveConfidenceData": false,
       "Settings": [
         {
+          "type": "DoubleSpinBox",
+          "name": "externalprocessor.timeout",
+          "caption": "Event timeout, s",
+          "description": "Timeout before object is considered passed and an event will be sent",
+          "defaultValue": 1.0,
+          "minValue": 0.0,
+          "maxValue": 60.0
+        },
+        {
           "type": "Repeater",
           "count": 10,
           "startIndex": 0,
