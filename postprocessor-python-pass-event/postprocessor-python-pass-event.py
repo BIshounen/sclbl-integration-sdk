@@ -126,7 +126,7 @@ def main():
 
     known_points = []
 
-    logger.info(input_object)
+    logger.debug(input_object)
 
     # get image parameters
     width = input_object['Width']
@@ -139,7 +139,7 @@ def main():
       key_string = f"externalprocessor.point{i}.figure"
       figure = json.loads(input_object["ExternalProcessorSettings"][key_string])
 
-      logger.info(figure)
+      logger.debug(figure)
 
       if figure.get('figure') is None:
         continue
@@ -160,14 +160,14 @@ def main():
 
       known_points[i]['lat_lon'] = (latitude, longitude)
 
-    logging.info(known_points)
-    logging.info(len(known_points))
-    logging.info(known_points != known_points_cache)
+    logging.debug(known_points)
+    logging.debug(len(known_points))
+    logging.debug(known_points != known_points_cache)
     if known_points != known_points_cache and len(known_points) >= 4:
       H = compute_homography(known_points)
       known_points_cache = known_points
 
-    logger.info(H)
+    logger.debug(H)
     if H is not None:
 
       for class_name, bboxes in input_object["BBoxes_xyxy"].items():
@@ -223,7 +223,7 @@ def main():
 
 
 
-    logger.info("Added event to output")
+    logger.debug("Added event to output")
 
     # Write object back to string
     output_message = communication_utils.writeInferenceResults(input_object)
@@ -235,7 +235,7 @@ def main():
 def compute_homography(known_points):
   """Computes a homography transformation matrix using OpenCV."""
 
-  logger.info('computing homography')
+  logger.debug('computing homography')
 
   pixel_points = []
   real_world_points = []
@@ -252,7 +252,7 @@ def compute_homography(known_points):
 
 
 def apply_homography(H, pixel_coord):
-  logger.info('applying homography')
+  logger.debug('applying homography')
   """Applies a homography transformation to a pixel coordinate."""
   px, py = pixel_coord
   transformed = np.dot(H, np.array([px, py, 1]))
