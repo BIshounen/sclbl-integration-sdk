@@ -155,6 +155,7 @@ def main():
       known_points[i]['lat_lon'] = (latitude, longitude)
 
     logging.info(known_points)
+    logging.info(len(known_points))
     if known_points != known_points_cache and len(known_points) >= 4:
       H = compute_homography(known_points)
 
