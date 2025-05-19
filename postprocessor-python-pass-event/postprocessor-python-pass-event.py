@@ -120,84 +120,69 @@ def main():
 
     lat_lon = {}
 
-    known_points = {}
+    known_points = []
 
     logger.info(input_object)
 
-    for setting_name, setting_value in input_object["ExternalProcessorSettings"].items():
-      # get image parameters
-      width = input_object['Width']
-      height = input_object['Height']
+    # get image parameters
+    width = input_object['Width']
+    height = input_object['Height']
 
-      if re.search(r"externalprocessor.point\d*.figure", setting_name):
-        figure = json.loads(setting_value)
-        logging.debug(figure)
+    for i in range(0, 10):
 
-        point_num = setting_name.split('.')[1]
-        if point_num not in known_points:
-            known_points[point_num] = {}
+      key_string = f"externalprocessor.point{i}.figure"
+      figure = input_object["ExternalProcessorSettings"][key_string]
 
-        if figure['figure'] is not None:
-          box_center = (
-            ((figure['figure']['points'][1][0] - figure['figure']['points'][0][0]) / 2
-             + figure['figure']['points'][0][0]) * width,
-            ((figure['figure']['points'][1][1] - figure['figure']['points'][0][1]) / 2
-             + figure['figure']['points'][0][1]) * height
-          )
+      if figure['figure'] is None:
+        continue
 
-          known_points[point_num]['pixel'] = box_center
+      box_center = (
+        ((figure['figure']['points'][1][0] - figure['figure']['points'][0][0]) / 2
+         + figure['figure']['points'][0][0]) * width,
+        ((figure['figure']['points'][1][1] - figure['figure']['points'][0][1]) / 2
+         + figure['figure']['points'][0][1]) * height
+      )
 
-      if re.search(r"externalprocessor.point\d*.latitude", setting_name):
-        point_num = setting_name.split('.')[1]
-        if point_num not in known_points:
-            known_points[point_num] = {}
+      known_points.append({'pixel': box_center})
 
-        if 'lat_lon' not in known_points[point_num]:
-          known_points[point_num]['lat_lon'] = (0,0)
+      key_string = f"externalprocessor.point{i}.latitude"
+      latitude = input_object["ExternalProcessorSettings"][key_string]
+      key_string = f"externalprocessor.point{i}.longitude"
+      longitude = input_object["ExternalProcessorSettings"][key_string]
 
-        known_points[point_num]['lat_lon'] = (setting_value, known_points[point_num]['lat_lon'][1])
+      known_points[i]['lat_lon'] = (latitude, longitude)
 
-      if re.search(r"externalprocessor.point\d*.longitude", setting_name):
-        point_num = setting_name.split('.')[1]
-        if point_num not in known_points:
-          known_points[point_num] = {}
+    if known_points != known_points_cache and len(known_points) >= 4:
+      logging.info(known_points)
+      H = compute_homography(known_points)
 
-        if 'lat_lon' not in known_points[point_num]:
-          known_points[point_num]['lat_lon'] = (0, 0)
+      known_points_cache = known_points
 
-        known_points[point_num]['lat_lon'] = (known_points[point_num]['lat_lon'][0], setting_value)
+    if H is not None:
 
-      if known_points != known_points_cache and len(known_points) >= 4:
-        logging.info(known_points)
-        H = compute_homography(known_points)
+      for class_name, bboxes in input_object["BBoxes_xyxy"].items():
+        object_index = 0
+        coordinate_counter = 0
+        bbox_pixel = [0, 0, 0, 0]
+        for bbox_coordinate in bboxes:
+          bbox_pixel[coordinate_counter] = bbox_coordinate
+          coordinate_counter += 1
+          if coordinate_counter == 4:
+            bbox_center = (
+              ((bbox_pixel[2] - bbox_pixel[0]) / 2 + bbox_pixel[0]),
+              ((bbox_pixel[3] - bbox_pixel[1]) / 2 + bbox_pixel[1])
+            )
+            lat, lon = apply_homography(H, bbox_center)
 
-        known_points_cache = known_points
+            input_object["ObjectsMetaData"][class_name]['AttributeKeys'][object_index].append("Latitude")
+            input_object["ObjectsMetaData"][class_name]['AttributeKeys'][object_index].append("Longitude")
+            input_object["ObjectsMetaData"][class_name]['AttributeValues'][object_index].append(str(lat))
+            input_object["ObjectsMetaData"][class_name]['AttributeValues'][object_index].append(str(lon))
 
-      if H is not None:
+            coordinate_counter = 0
+            object_index += 1
 
-        for class_name, bboxes in input_object["BBoxes_xyxy"].items():
-          object_index = 0
-          coordinate_counter = 0
-          bbox_pixel = [0, 0, 0, 0]
-          for bbox_coordinate in bboxes:
-            bbox_pixel[coordinate_counter] = bbox_coordinate
-            coordinate_counter += 1
-            if coordinate_counter == 4:
-              bbox_center = (
-                ((bbox_pixel[2] - bbox_pixel[0]) / 2 + bbox_pixel[0]),
-                ((bbox_pixel[3] - bbox_pixel[1]) / 2 + bbox_pixel[1])
-              )
-              lat, lon = apply_homography(H, bbox_center)
-
-              input_object["ObjectsMetaData"][class_name]['AttributeKeys'][object_index].append("Latitude")
-              input_object["ObjectsMetaData"][class_name]['AttributeKeys'][object_index].append("Longitude")
-              input_object["ObjectsMetaData"][class_name]['AttributeValues'][object_index].append(str(lat))
-              input_object["ObjectsMetaData"][class_name]['AttributeValues'][object_index].append(str(lon))
-
-              coordinate_counter = 0
-              object_index += 1
-
-        formatted_unpacked_object = pformat(input_object)
+      formatted_unpacked_object = pformat(input_object)
 
     logger.info("Added event to output")
 
@@ -213,9 +198,9 @@ def compute_homography(known_points):
 
   pixel_points = []
   real_world_points = []
-  for key, values in known_points.items():
-    pixel_points.append(values['pixel'])
-    real_world_points.append(values['lat_lon'])
+  for known_point in known_points:
+    pixel_points.append(known_point['pixel'])
+    real_world_points.append(known_point['lat_lon'])
 
   pixel_points = np.array(pixel_points, dtype=np.float32)
   real_world_points = np.array(real_world_points, dtype=np.float32)
