@@ -193,12 +193,17 @@ def main():
             object_id = input_object["ObjectsMetaData"][class_name]['ObjectIDs'][object_index]
             if object_id not in objects_cache:
               objects_cache[object_id] = {
-                'type': [str(class_name)],
+                'type': {str(class_name): 1},
                 'last_time_seen': time.time(),
                 'coordinates': [lat, lon]
               }
             else:
-              objects_cache[object_id]['type'].append(str(class_name))
+              object_type = str(class_name)
+              if object_type in objects_cache[object_id]['type']:
+                objects_cache[object_id]['type'][object_type] += 1
+              else:
+                objects_cache[object_id]['type'][object_type] = 1
+
               objects_cache[object_id]['last_time_seen'] = time.time()
               objects_cache[object_id]['coordinates'].append((lat, lon))
 
@@ -206,9 +211,12 @@ def main():
             object_index += 1
 
       for key in list(objects_cache.keys()):
-        if time.time() - objects_cache[key]['last_time_seen'] >= timeout:
+        object_type = max(objects_cache[key]['type'], key=objects_cache[key]['type'].get)
+        if time.time() - objects_cache[key]['last_time_seen'] >= timeout and object_type in ['car', 'truck', 'bus']:
           caption = "Object passed"
           description = json.dumps(objects_cache[key])
+
+
           del objects_cache[key]
 
           if "Events" not in input_object:
