@@ -170,6 +170,8 @@ def main():
     logger.debug(H)
     if H is not None:
 
+      timestamp = float(input_object['Timestamp'])
+
       for class_name, bboxes in input_object["BBoxes_xyxy"].items():
         object_index = 0
         coordinate_counter = 0
@@ -195,7 +197,7 @@ def main():
               objects_cache[object_id] = {
                 'type': {str(class_name): 1},
                 'last_time_seen': time.time(),
-                'coordinates': [(lat, lon)]
+                'coordinates': [(lat, lon, timestamp)]
               }
             else:
               object_type = str(class_name)
@@ -205,7 +207,7 @@ def main():
                 objects_cache[object_id]['type'][object_type] = 1
 
               objects_cache[object_id]['last_time_seen'] = time.time()
-              objects_cache[object_id]['coordinates'].append((lat, lon))
+              objects_cache[object_id]['coordinates'].append((lat, lon, timestamp))
 
             coordinate_counter = 0
             object_index += 1
