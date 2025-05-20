@@ -195,7 +195,7 @@ def main():
               objects_cache[object_id] = {
                 'type': {str(class_name): 1},
                 'last_time_seen': time.time(),
-                'coordinates': [lat, lon]
+                'coordinates': [(lat, lon)]
               }
             else:
               object_type = str(class_name)
