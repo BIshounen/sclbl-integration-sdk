@@ -206,7 +206,7 @@ def main():
             object_index += 1
 
       for key in list(objects_cache.keys()):
-        if objects_cache[key]['last_time_seen'] >= timeout:
+        if time.time() - objects_cache[key]['last_time_seen'] >= timeout:
           caption = "Object passed"
           description = json.dumps(objects_cache[key])
           del objects_cache[key]
