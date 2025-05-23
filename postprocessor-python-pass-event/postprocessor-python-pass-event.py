@@ -197,7 +197,18 @@ def main():
               objects_cache[object_id] = {
                 'type': {str(class_name): 1},
                 'last_time_seen': time.time(),
-                'coordinates': [(lat, lon, timestamp)]
+                'geojson':[
+                  {
+                    'type': 'Feature',
+                    'geometry': {
+                      'type': 'Point',
+                      'coordinates': [lat, lon]
+                    },
+                    'properties':{
+                      'timestamp': timestamp
+                    }
+                  }
+                ]
               }
             else:
               object_type = str(class_name)
@@ -207,7 +218,18 @@ def main():
                 objects_cache[object_id]['type'][object_type] = 1
 
               objects_cache[object_id]['last_time_seen'] = time.time()
-              objects_cache[object_id]['coordinates'].append((lat, lon, timestamp))
+              objects_cache[object_id]['geojson'].append(
+                {
+                  'type': 'Feature',
+                  'geometry': {
+                    'type': 'Point',
+                    'coordinates': [lat, lon]
+                  },
+                  'properties': {
+                    'timestamp': timestamp
+                  }
+                }
+              )
 
             coordinate_counter = 0
             object_index += 1
