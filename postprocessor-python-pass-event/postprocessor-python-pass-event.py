@@ -197,6 +197,7 @@ def main():
               objects_cache[object_id] = {
                 'type': {str(class_name): 1},
                 'last_time_seen': time.time(),
+                'object_id': object_id,
                 'geojson':[
                   {
                     'type': 'Feature',
