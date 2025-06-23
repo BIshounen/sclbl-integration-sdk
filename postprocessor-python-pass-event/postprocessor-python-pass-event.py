@@ -122,9 +122,11 @@ def main():
     # Parse input message
     input_object = communication_utils.parseInferenceResults(input_message)
 
+    device_id = input_object['DeviceID']
+
     lat_lon = {}
 
-    known_points = []
+    known_points = {}
 
     logger.debug(input_object)
 
@@ -151,24 +153,29 @@ def main():
          + figure['figure']['points'][0][1]) * height
       )
 
-      known_points.append({'pixel': box_center})
+      if device_id not in known_points:
+        known_points[device_id] = []
+        known_points_cache[device_id] = []
+        H[device_id] = None
+
+      known_points[device_id].append({'pixel': box_center})
 
       key_string = f"externalprocessor.point{i}.latitude"
       latitude = float(input_object["ExternalProcessorSettings"][key_string])/mantissa_coefficient
       key_string = f"externalprocessor.point{i}.longitude"
       longitude = float(input_object["ExternalProcessorSettings"][key_string])/mantissa_coefficient
 
-      known_points[i]['lat_lon'] = (latitude, longitude)
+      known_points[device_id][i]['lat_lon'] = (latitude, longitude)
 
-    logging.debug(known_points)
-    logging.debug(len(known_points))
-    logging.debug(known_points != known_points_cache)
-    if known_points != known_points_cache and len(known_points) >= 4:
-      H = compute_homography(known_points)
-      known_points_cache = known_points
+    logging.debug(known_points[device_id])
+    logging.debug(len(known_points[device_id]))
+    logging.debug(known_points[device_id] != known_points_cache[device_id])
+    if known_points[device_id] != known_points_cache[device_id] and len(known_points[device_id]) >= 4:
+      H[device_id] = compute_homography(known_points[device_id])
+      known_points_cache[device_id] = known_points[device_id]
 
-    logger.debug(H)
-    if H is not None:
+    logger.debug(H[device_id])
+    if H[device_id] is not None:
 
       timestamp = float(input_object['Timestamp'])
 
@@ -184,7 +191,7 @@ def main():
               ((bbox_pixel[2] - bbox_pixel[0]) / 2 + bbox_pixel[0]),
               ((bbox_pixel[3] - bbox_pixel[1]) / 2 + bbox_pixel[1])
             )
-            lat, lon = apply_homography(H, bbox_center)
+            lat, lon = apply_homography(H[device_id], bbox_center)
 
             input_object["ObjectsMetaData"][class_name]['AttributeKeys'][object_index].append("Latitude")
             input_object["ObjectsMetaData"][class_name]['AttributeKeys'][object_index].append("Longitude")
