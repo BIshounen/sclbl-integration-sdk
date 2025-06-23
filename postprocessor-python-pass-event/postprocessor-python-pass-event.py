@@ -101,7 +101,7 @@ def main():
   # coefficient for translating to real coordinates because of the Nx three digits mantissa
   mantissa_coefficient = 1000
 
-  H = None
+  H = {}
 
   known_points_cache = {}
 
