@@ -228,7 +228,7 @@ def main():
           "message": message
         }
 
-        requests.request('POST', url, json=body)
+        requests.request('POST', url, data=json.dumps(body))
 
 
 
