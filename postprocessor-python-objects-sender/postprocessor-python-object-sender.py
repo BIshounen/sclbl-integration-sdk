@@ -225,10 +225,10 @@ def main():
         body = {
           "topic": topic_path,
           "QoS": 1,
-          "message": json.dumps(message)
+          "message": message
         }
 
-        requests.request('POST', url, json=body)
+        requests.request('POST', url, json=json.dumps(body))
 
 
 
