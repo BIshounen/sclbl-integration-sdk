@@ -213,7 +213,8 @@ def main():
               },
               "properties": {
                 "object_type": str(class_name),
-                "object_id": str(uuid.UUID(bytes=object_id))
+                "object_id": str(uuid.UUID(bytes=object_id)),
+                "timestamp": str(timestamp)
               }
             })
 
