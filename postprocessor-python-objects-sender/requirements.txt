@@ -1,0 +1,6 @@
+pyinstaller
+msgpack
+scipy
+numpy
+opencv-python
+requests
