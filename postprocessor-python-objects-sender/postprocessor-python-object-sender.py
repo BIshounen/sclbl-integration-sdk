@@ -225,7 +225,7 @@ def main():
         body = {
           "topic": topic_path,
           "QoS": 1,
-          "message": message
+          "message": json.dumps(message)
         }
 
         requests.request('POST', url, json=body)
