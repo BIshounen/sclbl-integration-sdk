@@ -203,7 +203,8 @@ def main():
             input_object["ObjectsMetaData"][class_name]['AttributeValues'][object_index].append(str(lat))
             input_object["ObjectsMetaData"][class_name]['AttributeValues'][object_index].append(str(lon))
 
-            # manage object cache
+            object_id = input_object["ObjectsMetaData"][class_name]['ObjectIDs'][object_index]
+
             message.append({
               "type": "Feature",
               "geometry": {
@@ -212,7 +213,7 @@ def main():
               },
               "properties": {
                 "object_type": str(class_name),
-                "object_id": input_object["ObjectsMetaData"][class_name]['ObjectIDs'][object_index]
+                "object_id": str(uuid.UUID(bytes=object_id))
               }
             })
 
