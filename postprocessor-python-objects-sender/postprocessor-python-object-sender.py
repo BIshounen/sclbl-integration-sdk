@@ -221,7 +221,7 @@ def main():
             coordinate_counter = 0
             object_index += 1
 
-      if mqtt_address is not None and topic_path is not None:
+      if mqtt_address is not None and topic_path is not None and len(message) > 0:
         url = mqtt_address + '/send'
         body = {
           "topic": topic_path,
