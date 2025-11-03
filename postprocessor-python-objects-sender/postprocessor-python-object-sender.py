@@ -135,7 +135,6 @@ def main():
     width = input_object['Width']
     height = input_object['Height']
 
-    timeout = float(input_object["ExternalProcessorSettings"]["externalprocessor.timeout"])
     mqtt_address = str(input_object["ExternalProcessorSettings"].get('externalprocessor.server_address', None))
     topic_path = str(input_object["ExternalProcessorSettings"].get('externalprocessor.topic_path', None))
 
