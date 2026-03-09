@@ -7,13 +7,14 @@ import logging
 import logging.handlers
 import configparser
 import time
+from warnings import catch_warnings
 
 import numpy as np
 import cv2
 import json
 import uuid
 from pprint import pformat
-
+from requests.exceptions import RequestException, ConnectionError, Timeout, HTTPError
 import requests
 
 # Add the nxai-utilities python utilities
@@ -228,7 +229,17 @@ def main():
           "message": message
         }
 
-        requests.request('POST', url, json=body)
+        try:
+          response = requests.request('POST', url, json=body, timeout=10)
+          response.raise_for_status()
+        except ConnectionError:
+          logger.error("Failed to connect to the server.")
+        except Timeout:
+          logger.error("The request timed out.")
+        except HTTPError as e:
+          logger.error(f"HTTP error occurred: {e.response.status_code}")
+        except RequestException as e:
+          logger.error(f"An unexpected request error occurred: {e}")
 
 
 
