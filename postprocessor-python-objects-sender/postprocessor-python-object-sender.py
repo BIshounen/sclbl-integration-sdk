@@ -184,11 +184,9 @@ def main():
 
       message = []
 
-      if not "BBoxes_xyxy" in input_object:
-        logger.error("No BBoxes_xyxy")
-        return
 
-      for class_name, bboxes in input_object["BBoxes_xyxy"].items():
+
+      for class_name, bboxes in input_object.get("BBoxes_xyxy", {}).items():
         object_index = 0
         coordinate_counter = 0
         bbox_pixel = [0, 0, 0, 0]
