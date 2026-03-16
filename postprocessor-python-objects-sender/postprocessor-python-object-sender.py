@@ -9,6 +9,7 @@ import configparser
 import time
 from warnings import catch_warnings
 import msgpack
+import struct
 
 import numpy as np
 import cv2
@@ -197,6 +198,8 @@ def main():
           except socket.timeout:
             # Did not receive image header
             logger.debug("Did not receive image header. Are the settings correct?")
+          except struct.error as e:
+            logger.error(f"Header parse failed: {e}")
 
           if image_header:
             image_header = msgpack.unpackb(image_header)
