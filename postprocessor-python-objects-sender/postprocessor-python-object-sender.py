@@ -73,6 +73,10 @@ Postprocessor_Socket_Path = "/tmp/python-object-sender-postprocessor.sock"
 # 12: //UINT32
 # 13: //UINT64
 
+
+last_vectorized = {}
+
+
 def config():
   logger.info("Reading configuration from:" + CONFIG_FILE)
 
@@ -120,7 +124,6 @@ def main():
   known_points_cache = {}
 
   vector_store = None
-
 
   # Wait for messages in a loop
   while True:
@@ -330,6 +333,8 @@ def apply_homography(H, pixel_coord):
 
 
 def vectorize_object_image(bbox, image, vector_store, track_id, timestamp, device_id):
+  if track_id in last_vectorized:
+    return  # skip, too soon
   x1, y1, x2, y2 = map(int, bbox)
   cropped = image[y1:y2, x1:x2]
 
@@ -338,7 +343,14 @@ def vectorize_object_image(bbox, image, vector_store, track_id, timestamp, devic
     "timestamp": timestamp,
     "device_id": device_id
   })
+
+  last_vectorized[track_id] = timestamp
+
+  for k in [k for k in last_vectorized if timestamp - last_vectorized[k] >= 5000]:
+    del last_vectorized[k]
+
   logger.info(f"Stored vector: {point_id}")
+
 
 
 if __name__ == "__main__":
