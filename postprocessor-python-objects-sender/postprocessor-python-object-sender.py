@@ -242,7 +242,8 @@ def main():
             if image:
               vectorize_object_image(bbox_pixel, image)
 
-      if mqtt_address is not None and topic_path is not None and len(message) > 0:
+      if input_object["ExternalProcessorSettings"].get('externalprocessor.send_mqtt', None) and\
+          mqtt_address is not None and topic_path is not None and len(message) > 0:
         url = mqtt_address + '/send'
         body = {
           "topic": topic_path,

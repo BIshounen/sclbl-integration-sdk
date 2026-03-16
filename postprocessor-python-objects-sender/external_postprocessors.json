@@ -65,6 +65,13 @@
           }
         },
         {
+          "type": "CheckBox",
+          "name": "externalprocessor.send_mqtt",
+          "caption": "Send MQTT message",
+          "description": "Check to send objects to the MQTT server",
+          "defaultValue": false
+        },
+        {
           "type": "TextField",
           "name":"externalprocessor.server_address",
           "caption": "MQTT plugin address",
