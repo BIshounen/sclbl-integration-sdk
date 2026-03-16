@@ -302,16 +302,8 @@ def apply_homography(H, pixel_coord):
 
 
 def vectorize_object_image(bbox, image):
-  # Extract min/max from the 4 corners
-  xs = [p[0] for p in bbox]
-  ys = [p[1] for p in bbox]
-  x_min, x_max = min(xs), max(xs)
-  y_min, y_max = min(ys), max(ys)
-
-  # Crop (numpy indexing is [rows, cols])
-  cropped = image[y_min:y_max, x_min:x_max]
-
-  # Save
+  x1, y1, x2, y2 = bbox
+  cropped = image[y1:y2, x1:x2]
   cv2.imwrite(os.path.join(script_location, "..", "etc", "test.jpg"), cropped)
 
 
