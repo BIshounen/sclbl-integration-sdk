@@ -123,6 +123,24 @@ def main():
       # Request timed out. Continue waiting
       continue
 
+    image = None
+
+    image_header = None
+    try:
+      image_header = communication_utils.receiveMessageOverConnection(connection)
+    except socket.timeout:
+      # Did not receive image header
+      logger.debug("Did not receive image header. Are the settings correct?")
+    except struct.error as e:
+      logger.error(f"Header parse failed: {e}")
+      continue
+
+    if image_header:
+      image_header = msgpack.unpackb(image_header)
+      image_data = communication_utils.read_shm(image_header["SHMKey"])
+      image = np.frombuffer(image_data, dtype=np.uint8)
+      image = image.reshape((image_header["Height"], image_header["Width"], image_header["Channels"]))
+
     # Parse input message
     input_object = communication_utils.parseInferenceResults(input_message)
 
@@ -185,28 +203,6 @@ def main():
       timestamp = float(input_object['Timestamp'])
 
       message = []
-
-      image = None
-
-      if input_object["ExternalProcessorSettings"].get('externalprocessor.vectorize', None):
-        if input_object["ExternalProcessorSettings"].get('externalprocessor.vectorize.url', None) and \
-            input_object["ExternalProcessorSettings"].get('externalprocessor.vectorize.token', None):
-
-          image_header = None
-          try:
-            image_header = communication_utils.receiveMessageOverConnection(connection)
-          except socket.timeout:
-            # Did not receive image header
-            logger.debug("Did not receive image header. Are the settings correct?")
-          except struct.error as e:
-            logger.error(f"Header parse failed: {e}")
-            continue
-
-          if image_header:
-            image_header = msgpack.unpackb(image_header)
-            image_data = communication_utils.read_shm(image_header["SHMKey"])
-            image = np.frombuffer(image_data, dtype=np.uint8)
-            image = image.reshape((image_header["Height"], image_header["Width"], image_header["Channels"]))
 
       for class_name, bboxes in input_object.get("BBoxes_xyxy", {}).items():
         object_index = 0
