@@ -302,7 +302,7 @@ def apply_homography(H, pixel_coord):
 
 
 def vectorize_object_image(bbox, image):
-  x1, y1, x2, y2 = bbox
+  x1, y1, x2, y2 = int(bbox[0]), int(bbox[1]), int(bbox[2]), int(bbox[3])
   cropped = image[y1:y2, x1:x2]
   cv2.imwrite(os.path.join(script_location, "..", "etc", "test.jpg"), cropped)
 
