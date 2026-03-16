@@ -187,7 +187,7 @@ def main():
 
       image = None
 
-      if input_object["ExternalProcessorSettings"].get('externalprocessor..vectorize', None):
+      if input_object["ExternalProcessorSettings"].get('externalprocessor.vectorize', None):
         if input_object["ExternalProcessorSettings"].get('externalprocessor.vectorize.url', None) and \
             input_object["ExternalProcessorSettings"].get('externalprocessor.vectorize.token', None):
 
