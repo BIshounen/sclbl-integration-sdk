@@ -15,6 +15,13 @@ import numpy as np
 import cv2
 import json
 import uuid
+
+
+import torch
+import open_clip
+
+from VectorStore import VectorStore
+
 from pprint import pformat
 from requests.exceptions import RequestException, ConnectionError, Timeout, HTTPError
 import requests
@@ -31,6 +38,8 @@ CONFIG_FILE = os.path.join(script_location, "..", "etc", "plugin.osender.ini")
 
 # Set up logging
 LOG_FILE = os.path.join(script_location, "..", "etc", "plugin.osender.log")
+
+MODEL_STATE_PATH = os.path.join(script_location, "..", "etc", "openclip_model.pth")
 
 # Initialize plugin and logging, script makes use of INFO and DEBUG levels
 logging.basicConfig(
@@ -110,6 +119,8 @@ def main():
 
   known_points_cache = {}
 
+  vector_store = None
+
 
   # Wait for messages in a loop
   while True:
@@ -126,23 +137,35 @@ def main():
     image = None
     image_header = None
 
-    try:
-      image_header = communication_utils.receiveMessageOverConnection(connection)
-    except socket.timeout:
-      # Did not receive image header
-      logger.debug("Did not receive image header. Are the settings correct?")
-    except struct.error as e:
-      logger.error(f"Header parse failed: {e}")
-      continue
+    # Parse input message
+    input_object = communication_utils.parseInferenceResults(input_message)
+
+    if input_object["ExternalProcessorSettings"].get('externalprocessor.vectorize', None) and \
+        input_object["ExternalProcessorSettings"].get('externalprocessor.vectorize.url', None) is not None and \
+        input_object["ExternalProcessorSettings"]['externalprocessor.vectorize.url'] != '' and\
+        input_object["ExternalProcessorSettings"].get('externalprocessor.vectorize.token', None) is not None and\
+        input_object["ExternalProcessorSettings"]['externalprocessor.vectorize.token'] != '':
+
+      try:
+        image_header = communication_utils.receiveMessageOverConnection(connection)
+      except socket.timeout:
+        # Did not receive image header
+        logger.debug("Did not receive image header. Are the settings correct?")
+      except struct.error as e:
+        logger.error(f"Header parse failed: {e}")
+        continue
+
+      if vector_store is None:
+        qdrant_url = input_object["ExternalProcessorSettings"]['externalprocessor.vectorize.url']
+        api_token = str(input_object["ExternalProcessorSettings"]['externalprocessor.vectorize.token'])
+        vector_store = VectorStore(qdrant_url=qdrant_url, collection_name="vehicles", api_token=api_token)
+
 
     if image_header:
       image_header = msgpack.unpackb(image_header)
       image_data = communication_utils.read_shm(image_header["SHMKey"])
       image = np.frombuffer(image_data, dtype=np.uint8)
       image = image.reshape((image_header["Height"], image_header["Width"], image_header["Channels"]))
-
-    # Parse input message
-    input_object = communication_utils.parseInferenceResults(input_message)
 
     device_id = input_object['DeviceID']
 
@@ -240,7 +263,12 @@ def main():
             object_index += 1
 
             if image is not None:
-              vectorize_object_image(bbox_pixel, image)
+              vectorize_object_image(bbox_pixel,
+                                     image,
+                                     vector_store,
+                                     str(uuid.UUID(bytes=object_id)),
+                                     str(timestamp),
+                                     device_id)
 
       if input_object["ExternalProcessorSettings"].get('externalprocessor.send_mqtt', None) and\
           mqtt_address is not None and topic_path is not None and len(message) > 0:
@@ -301,10 +329,16 @@ def apply_homography(H, pixel_coord):
   return (X, Y)
 
 
-def vectorize_object_image(bbox, image):
-  x1, y1, x2, y2 = int(bbox[0]), int(bbox[1]), int(bbox[2]), int(bbox[3])
+def vectorize_object_image(bbox, image, vector_store, track_id, timestamp, device_id):
+  x1, y1, x2, y2 = map(int, bbox)
   cropped = image[y1:y2, x1:x2]
-  cv2.imwrite(os.path.join(script_location, "..", "etc", "test.jpg"), cropped)
+
+  point_id = vector_store.store(cropped, metadata={
+    "track_id": track_id,
+    "timestamp": timestamp,
+    "device_id": device_id
+  })
+  logger.info(f"Stored vector: {point_id}")
 
 
 if __name__ == "__main__":
@@ -324,6 +358,15 @@ if __name__ == "__main__":
   signal.signal(signal.SIGINT, signal_handler)
   # Start program
   try:
+    device = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
+    model, _, preprocess = open_clip.create_model_and_transforms('hf-hub:timm/ViT-gopt-16-SigLIP2-384',
+                                                                 device=device)
+    model.to(device).eval()
+
+    if not os.path.isfile(MODEL_STATE_PATH):
+      torch.save(model.state_dict(), MODEL_STATE_PATH)
+    else:
+      model.load_state_dict(torch.load(MODEL_STATE_PATH))
     main()
   except Exception as e:
     logger.error(e, exc_info=True)

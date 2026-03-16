@@ -4,3 +4,7 @@ scipy
 numpy
 opencv-python
 requests
+torch
+open_clip_torch
+qdrant-client
+Pillow
