@@ -8,6 +8,7 @@ import logging.handlers
 import configparser
 import time
 from warnings import catch_warnings
+import msgpack
 
 import numpy as np
 import cv2
@@ -184,7 +185,24 @@ def main():
 
       message = []
 
+      image = None
 
+      if input_object["ExternalProcessorSettings"].get('externalprocessor..vectorize', None):
+        if input_object["ExternalProcessorSettings"].get('externalprocessor.vectorize.url', None) and \
+            input_object["ExternalProcessorSettings"].get('externalprocessor.vectorize.token', None):
+
+          image_header = None
+          try:
+            image_header = communication_utils.receiveMessageOverConnection(connection)
+          except socket.timeout:
+            # Did not receive image header
+            logger.debug("Did not receive image header. Are the settings correct?")
+
+          if image_header:
+            image_header = msgpack.unpackb(image_header)
+            image_data = communication_utils.read_shm(image_header["SHMKey"])
+            image = np.frombuffer(image_data, dtype=np.uint8)
+            image = image.reshape((image_header["Height"], image_header["Width"], image_header["Channels"]))
 
       for class_name, bboxes in input_object.get("BBoxes_xyxy", {}).items():
         object_index = 0
@@ -221,6 +239,9 @@ def main():
             coordinate_counter = 0
             object_index += 1
 
+            if image:
+              vectorize_object_image(bbox_pixel, image)
+
       if mqtt_address is not None and topic_path is not None and len(message) > 0:
         url = mqtt_address + '/send'
         body = {
@@ -240,7 +261,6 @@ def main():
           logger.error(f"HTTP error occurred: {e.response.status_code}")
         except RequestException as e:
           logger.error(f"An unexpected request error occurred: {e}")
-
 
 
     logger.debug("Added event to output")
@@ -278,6 +298,20 @@ def apply_homography(H, pixel_coord):
   transformed = np.dot(H, np.array([px, py, 1]))
   X, Y = transformed[:2] / transformed[2]  # Normalize by Z
   return (X, Y)
+
+
+def vectorize_object_image(bbox, image):
+  # Extract min/max from the 4 corners
+  xs = [p[0] for p in bbox]
+  ys = [p[1] for p in bbox]
+  x_min, x_max = min(xs), max(xs)
+  y_min, y_max = min(ys), max(ys)
+
+  # Crop (numpy indexing is [rows, cols])
+  cropped = image[y_min:y_max, x_min:x_max]
+
+  # Save
+  cv2.imwrite(os.path.join(script_location, "..", "etc", "test.jpg"), cropped)
 
 
 if __name__ == "__main__":

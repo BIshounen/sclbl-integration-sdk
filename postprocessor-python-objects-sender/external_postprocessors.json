@@ -8,6 +8,25 @@
       "ReceiveConfidenceData": false,
       "Settings": [
         {
+          "type": "CheckBox",
+          "name": "externalprocessor.vectorize",
+          "caption": "Vectorization",
+          "description": "Check to vectorize images and store to the Qdrant database",
+          "defaultValue": false
+        },
+        {
+          "type": "TextField",
+          "name": "externalprocessor.vectorize.url",
+          "caption": "Qdrant URL",
+          "description": "If vectorization is enable, provide Qdrand address here"
+        },
+        {
+          "type": "PasswordField",
+          "name": "externalprocessor.vectorize.token",
+          "caption": "Token",
+          "description": "If vectorization is enable, this token will be used to connect to the Qdrant DB"
+        },
+        {
           "type": "Repeater",
           "count": 10,
           "startIndex": 0,
