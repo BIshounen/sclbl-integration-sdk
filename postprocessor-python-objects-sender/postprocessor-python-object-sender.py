@@ -124,8 +124,8 @@ def main():
       continue
 
     image = None
-
     image_header = None
+
     try:
       image_header = communication_utils.receiveMessageOverConnection(connection)
     except socket.timeout:
@@ -239,7 +239,7 @@ def main():
             coordinate_counter = 0
             object_index += 1
 
-            if image:
+            if image is not None:
               vectorize_object_image(bbox_pixel, image)
 
       if input_object["ExternalProcessorSettings"].get('externalprocessor.send_mqtt', None) and\
