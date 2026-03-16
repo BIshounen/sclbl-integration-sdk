@@ -200,10 +200,8 @@ def main():
             )
             lat, lon = apply_homography(H[device_id], bbox_center)
 
-            input_object["ObjectsMetaData"][class_name]['AttributeKeys'][object_index].append("Latitude")
-            input_object["ObjectsMetaData"][class_name]['AttributeKeys'][object_index].append("Longitude")
-            input_object["ObjectsMetaData"][class_name]['AttributeValues'][object_index].append(str(lat))
-            input_object["ObjectsMetaData"][class_name]['AttributeValues'][object_index].append(str(lon))
+            input_object["ObjectsMetaData"][class_name]['AttributeKeys'][object_index].append("Coordinates")
+            input_object["ObjectsMetaData"][class_name]['AttributeValues'][object_index].append(str(f'{lat}, {lon}'))
 
             object_id = input_object["ObjectsMetaData"][class_name]['ObjectIDs'][object_index]
 
