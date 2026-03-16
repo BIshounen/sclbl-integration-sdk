@@ -200,7 +200,7 @@ def main():
             logger.debug("Did not receive image header. Are the settings correct?")
           except struct.error as e:
             logger.error(f"Header parse failed: {e}")
-            break
+            continue
 
           if image_header:
             image_header = msgpack.unpackb(image_header)
