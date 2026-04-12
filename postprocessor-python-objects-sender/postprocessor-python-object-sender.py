@@ -142,7 +142,8 @@ def main():
     for i in range(0, 10):
 
       key_string = f"externalprocessor.point{i}.figure"
-      if key_string not in json.loads(input_object["ExternalProcessorSettings"]):
+
+      if key_string not in input_object["ExternalProcessorSettings"]:
         continue
 
       figure = json.loads(input_object["ExternalProcessorSettings"][key_string])
