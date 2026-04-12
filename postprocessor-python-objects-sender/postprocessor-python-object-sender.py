@@ -178,6 +178,7 @@ def main():
     if device_id not in known_points:
       output_message = communication_utils.writeInferenceResults(input_object)
       communication_utils.sendMessageOverConnection(connection, output_message)
+      continue
 
     logging.debug(known_points[device_id])
     logging.debug(len(known_points[device_id]))
