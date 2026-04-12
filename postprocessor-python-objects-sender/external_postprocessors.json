@@ -2,7 +2,7 @@
   "externalPostprocessors": [
     {
       "Name": "Python-Object-Sender-Postprocessor",
-      "Command": "/opt/networkoptix-metavms/mediaserver/bin/plugins/nxai_plugin/nxai_manager/postprocessors/postprocessor-python-object-sender",
+      "Command": "/opt/networkoptix/mediaserver/var/nxai_plugin/nxai_manager/postprocessors/postprocessor-python-object-sender",
       "SocketPath": "/tmp/python-object-sender-postprocessor.sock",
       "ReceiveInputTensor": false,
       "ReceiveConfidenceData": false,
