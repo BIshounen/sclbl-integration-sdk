@@ -174,6 +174,9 @@ def main():
 
       known_points[device_id][i]['lat_lon'] = (latitude, longitude)
 
+    if device_id not in known_points:
+      continue
+
     logging.debug(known_points[device_id])
     logging.debug(len(known_points[device_id]))
     logging.debug(known_points[device_id] != known_points_cache[device_id])
