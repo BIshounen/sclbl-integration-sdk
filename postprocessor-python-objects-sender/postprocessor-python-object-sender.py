@@ -174,8 +174,10 @@ def main():
 
       known_points[device_id][i]['lat_lon'] = (latitude, longitude)
 
+    # bypass message if no settings
     if device_id not in known_points:
-      continue
+      output_message = communication_utils.writeInferenceResults(input_object)
+      communication_utils.sendMessageOverConnection(connection, output_message)
 
     logging.debug(known_points[device_id])
     logging.debug(len(known_points[device_id]))
