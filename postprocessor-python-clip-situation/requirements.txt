@@ -1,0 +1,9 @@
+--extra-index-url https://download.pytorch.org/whl/cu126
+pyinstaller
+msgpack
+numpy
+pillow
+torch==2.13.0+cu126
+open_clip_torch
+timm
+transformers

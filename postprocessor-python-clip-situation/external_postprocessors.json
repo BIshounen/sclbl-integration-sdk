@@ -1,0 +1,87 @@
+[
+  {
+    "Name": "Python-CLIP-Situation-Postprocessor",
+    "Command": "C:\\Windows\\System32\\config\\systemprofile\\AppData\\Local\\Network Optix\\Network Optix MetaVMS Media Server\\nx_ai_manager\\nxai_manager\\postprocessors\\postprocessor-python-clip-situation.exe",
+    "Schedule": "OBJECTS",
+    "ReceiveInputImage": true,
+    "LogFilepath": "C:\\Windows\\System32\\config\\systemprofile\\AppData\\Local\\Network Optix\\Network Optix MetaVMS Media Server\\nx_ai_manager\\nxai_manager\\etc\\plugin.clip-situation.log",
+    "Config": {
+      "LogLevel": "INFO",
+      "clip_model_name": "hf-hub:timm/ViT-L-16-SigLIP2-384",
+      "clip_precision": "fp16",
+      "dump_crops": "false",
+      "dump_crops_max": "40",
+      "max_crops_per_frame": "4"
+    },
+    "UserSettings": [
+      {
+        "type": "DoubleSpinBox",
+        "name": "similarity_threshold",
+        "caption": "Similarity threshold",
+        "description": "Minimum SigLIP match score (0-1) required to tag an object. MEASURED on this deployment, 744 crops of street traffic: median 0.001, p90 0.098, max 0.317 -- so the theoretical 0.5 midpoint fires on nothing. The sigmoid is very steep (logit_scale ~108), so 0.5 demands cosine similarity ~0.151 while real object crops top out near 0.145. Start at 0.15 and tune using the per-crop scores in the postprocessor's log at LogLevel=DEBUG.",
+        "defaultValue": 0.15,
+        "minValue": 0.0,
+        "maxValue": 1.0
+      },
+      {
+        "type": "DoubleSpinBox",
+        "name": "clip_throttle_seconds",
+        "caption": "Re-check interval per object (seconds)",
+        "description": "How often CLIP re-examines the SAME tracked object. Objects are matched by the ID the detector assigns, so an object that stays in view is only re-examined this often instead of on every frame. Raise it to cut GPU load, lower it to react faster to an object whose situation changes. 0 examines every object on every frame. This does not affect how often events are raised -- that is set per device in Nx.",
+        "defaultValue": 0.5,
+        "minValue": 0.0,
+        "maxValue": 10.0
+      },
+      {
+        "type": "DoubleSpinBox",
+        "name": "crop_context_percent",
+        "caption": "Context around object (% of longest side)",
+        "description": "How much surrounding scene to include around each detected object before it is sent to CLIP, as a percentage of the object's LONGEST side. Aspect-aware: the crop is first squarised (the short side is grown out to match the long one), because CLIP squashes every crop to 384x384 without preserving aspect, so a tall narrow person box would otherwise reach the model horizontally stretched. If squarising already grew the box by more than this percentage, nothing further is added. If squarising cost less, the remaining budget is spent growing the square -- so this acts as a FLOOR on expansion, not a ceiling. Examples at 15%: a 50x150 person becomes a 150x150 crop; a 200x220 car becomes 253x253; an already-square 300x300 box becomes 345x345. 0 still squarises but adds nothing further. The region is always clamped to the frame edges, and the bounding box Nx draws is never modified.",
+        "defaultValue": 15.0,
+        "minValue": 0.0,
+        "maxValue": 200.0
+      },
+      {
+        "type": "DoubleSpinBox",
+        "name": "negative_margin",
+        "caption": "Negative rejection strength",
+        "description": "How decisively a phrase must beat its negative to count as a match. This is a softmax between the positive and the negative phrase, so 0.5 means 'the positive describes the crop better than the negative does' and is the natural boundary. Raise toward 0.9 to demand a clear win and reject anything ambiguous; lower toward 0.1 to let borderline cases through. Ignored for phrases that have no negative.",
+        "defaultValue": 0.5,
+        "minValue": 0.0,
+        "maxValue": 1.0
+      },
+      {
+        "type": "Repeater",
+        "count": 5,
+        "startIndex": 1,
+        "template": {
+          "type": "GroupBox",
+          "caption": "Situation phrase #",
+          "filledCheckItems": [
+            "phrase#"
+          ],
+          "items": [
+            {
+              "type": "TextField",
+              "name": "phrase#",
+              "caption": "Phrase #",
+              "description": "Free-text description of what to detect, e.g. 'a person climbing a fence'"
+            },
+            {
+              "type": "TextField",
+              "name": "negative#",
+              "caption": "Exclude if it looks more like #",
+              "description": "Optional. A competing description that should NOT match. The object is only reported if the phrase above describes it better than this does. Use it to carve out what you do not want: to find a person WITHOUT a backpack, put 'a person with empty hands' above and 'a person wearing a backpack' here. Leave blank to match on the phrase alone."
+            }
+          ]
+        }
+      }
+    ],
+    "Events": [
+      {
+        "ID": "clip_situation.match",
+        "Name": "Situation Detected"
+      }
+    ]
+  }
+]

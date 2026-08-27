@@ -2,9 +2,13 @@ cmake_minimum_required(VERSION 3.10.2)
 
 project(nxai-integration-examples)
 
-# Add Scailable C Utilities for all subprojects
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/nxai-utilities)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/nxai-utilities/include)
+# Add Scailable C Utilities for all subprojects. Linux/WSL only: this vendored
+# copy is POSIX-only (sysv_ipc-based C sources) and does not build on Windows;
+# postprocessor-python-clip-situation below doesn't need it (see its CMakeLists.txt).
+if(NOT WIN32)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/nxai-utilities)
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/nxai-utilities/include)
+endif()
 
 # Add C Postprocessor project
 # add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/postprocessor-c-example)
@@ -45,6 +49,9 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/nxai-utilities/include)
 # Add Preprocessor Python project
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/postprocessor-python-pass-event)
 
+# Add CLIP Situation Postprocessor Python project
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/postprocessor-python-clip-situation)
+
 # Add installation option
 install(TARGETS
 #     postprocessor-c-example
@@ -65,6 +72,18 @@ install(PROGRAMS
     # ${CMAKE_CURRENT_BINARY_DIR}/postprocessor-python-events-example/postprocessor-python-events-example
     # ${CMAKE_CURRENT_BINARY_DIR}/postprocessor-cloud-inference-example/postprocessor-cloud-inference-example
     DESTINATION /opt/networkoptix-metavms/mediaserver/bin/plugins/nxai_plugin/nxai_manager/postprocessors/
+)
+
+# postprocessor-python-clip-situation is built with PyInstaller --onedir (see that
+# component's CMakeLists.txt for why: --onefile's self-extraction cost the AI
+# Manager's short IPC-readiness window, so frames never got routed to it). Its
+# artifact is a DIRECTORY holding the exe plus _internal/. Install its *contents*
+# flat into postprocessors/ so that <exe dir>/../etc and
+# <exe dir>/../nxai-utilities-v5 still resolve the same way they did under --onefile.
+install(DIRECTORY
+    ${CMAKE_CURRENT_BINARY_DIR}/postprocessor-python-clip-situation/postprocessor-python-clip-situation/
+    DESTINATION /opt/networkoptix-metavms/mediaserver/bin/plugins/nxai_plugin/nxai_manager/postprocessors/
+    USE_SOURCE_PERMISSIONS
 )
 
 # Install preprocessors
